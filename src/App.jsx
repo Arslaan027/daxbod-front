@@ -64,6 +64,7 @@ function App() {
             />
             <Route path="/team/:id" element={<Team />} />
             <Route path="/payroll/:id" element={<Payroll />} />
+            <Route path="/employee/:id" element={<Employee />} />
             <Route path="/Inventory" element={<Inventory />} />
             <Route path="/job-application" element={<JobApplication />} />
             <Route path="/application-form" element={<Form />} />
