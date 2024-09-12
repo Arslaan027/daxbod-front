@@ -93,8 +93,8 @@ const Members = ({ onDetailsClick }) => {
           console.log("Update response:", res.data);
 
           setDataFromDb((prevUsers) =>
-            prevUsers.map(
-              (user) => (user.empId === newEmployee.id ? res.data : user) // Use empId
+            prevUsers.map((user) =>
+              user.empId === newEmployee.id ? res.data : user
             )
           );
           setEditingEmployee(null);
