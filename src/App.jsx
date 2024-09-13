@@ -39,8 +39,9 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-
+        <Route path="/signup" element={<Signup />} />{" "}
+        <Route path="/job-application" element={<JobApplication />} />
+        <Route path="/application-form" element={<Form />} />
         {/* Protected Routes */}
         {isAuthenticated ? (
           <Route
@@ -66,8 +67,6 @@ function App() {
             <Route path="/payroll/:id" element={<Payroll />} />
             <Route path="/employee/:id" element={<Employee />} />
             <Route path="/Inventory" element={<Inventory />} />
-            <Route path="/job-application" element={<JobApplication />} />
-            <Route path="/application-form" element={<Form />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" />} />

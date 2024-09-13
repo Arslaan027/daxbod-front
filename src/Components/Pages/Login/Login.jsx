@@ -36,10 +36,15 @@ const Login = () => {
         }
       );
       console.log(response);
-      if (response.status === 200) {
+      if (
+        response.status === 200 &&
+        response.data.message === "Login successful"
+      ) {
         localStorage.setItem("loggedin", "true");
         localStorage.setItem("token", response.data.token);
         navigate("/");
+      } else {
+        alert("Wrong Credentials or error occurred during login");
       }
     } catch (error) {
       alert("Wrong Credentials or error occurred during login.");
