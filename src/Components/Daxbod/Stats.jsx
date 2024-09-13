@@ -2,7 +2,7 @@ import { IoIosPerson, IoIosPersonAdd, IoIosEyeOff } from "react-icons/io";
 import Balance from "./Balance";
 import { IoAddCircleOutline } from "react-icons/io5";
 
-const Stats = ({ darkMode }) => {
+const Stats = () => {
   const empolyeesData = [
     {
       title: "Total Employees",
@@ -49,7 +49,7 @@ const Stats = ({ darkMode }) => {
           </div>
         ))}
       </div>
-      <Balance darkMode={darkMode} />
+      <Balance />
     </div>
   );
 };

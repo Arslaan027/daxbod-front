@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import ShortCut from "../Profile/ShortCut";
-import Donutchart from "../Profile/Donutchart";
-import User from "../Profile/User";
-import Title from "../Title";
+// import React, { useState } from "react";
+// import ShortCut from "../Profile/ShortCut";
+// import Donutchart from "../Profile/Donutchart";
+// import User from "../Profile/User";
+// import Title from "../Title";
 import PIPlist from "./PIPlist";
-import { IoMdPersonAdd } from "react-icons/io";
+// import { IoMdPersonAdd } from "react-icons/io";
 
 const Profile = () => {
   return (

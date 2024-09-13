@@ -22,7 +22,7 @@ const PIPlist = ({ darkMode }) => {
         const res = await axios.get(
           "http://localhost:3000/hr-management/PIP/get-pip"
         );
-        console.log("API Response:", res.data); // Log the entire response
+        console.log("API Response:", res.data[0]);
 
         // Extract PIP entries from the response
         if (
@@ -79,7 +79,7 @@ const PIPlist = ({ darkMode }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 w-full max-h-fit overflow-y-hidden mx-auto">
+    <div className="flex flex-col gap-4 p-4 w-full max-h-[100vh] overflow-y-hidden mx-auto">
       <div className="flex justify-between items-center">
         <Title>PIP Employees</Title>
         <button
