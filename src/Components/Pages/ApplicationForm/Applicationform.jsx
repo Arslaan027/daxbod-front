@@ -82,7 +82,7 @@ const Form = () => {
                 htmlFor="qualification"
                 className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
               >
-                Qualification
+                Qualification <span className="text-red-600 font-bold">*</span>
               </label>
               <input
                 type="text"
@@ -90,7 +90,7 @@ const Form = () => {
                 name="qualification"
                 value={formData.qualification}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white" 
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
               />
             </div>
@@ -152,7 +152,7 @@ const Form = () => {
                 id="resume"
                 name="resume"
                 onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white" 
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
               />
             </div>
