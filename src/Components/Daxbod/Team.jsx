@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Title from "./Title";
 import { IoMdPersonAdd } from "react-icons/io";
@@ -8,18 +8,14 @@ import { useDropzone } from "react-dropzone";
 import { TbFaceIdError } from "react-icons/tb";
 
 const Team = () => {
-  // State to control the display of the add form
   const [showForm, setShowForm] = useState(false);
-  // State to control the display of the edit form
   const [editForm, setEditForm] = useState(false);
-  // State for new user data
   const [newUser, setNewUser] = useState({
     name: "",
     country: "",
     role: "",
     image: "",
   });
-  // State for user data being edited
   const [editUser, setEditUser] = useState({
     id: "",
     name: "",
@@ -27,12 +23,10 @@ const Team = () => {
     role: "",
     image: "",
   });
-  // State for storing the list of leaders
   const [leaders, setLeaders] = useState([]);
-  // State to handle loading state
   const [loading, setLoading] = useState(false);
-  // State for error messages
   const [error, setError] = useState(null);
+  const [isSlideOut, setIsSlideOut] = useState(false);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: "image/*",
@@ -57,7 +51,6 @@ const Team = () => {
         const response = await axios.get(
           "http://localhost:3000/hr-management/leader/get"
         );
-        console.log(response.data);
         setLeaders(response.data);
       } catch (error) {
         console.error("There was an error fetching the leaders:", error);
@@ -69,6 +62,7 @@ const Team = () => {
   }, []);
 
   const handleAddClick = () => {
+    setIsSlideOut(true);
     setShowForm(true);
   };
 
@@ -84,7 +78,8 @@ const Team = () => {
   };
 
   const handleCloseForm = () => {
-    setShowForm(false);
+    setIsSlideOut(false);
+    setTimeout(() => setShowForm(false), 300); // Delay hiding the form to complete slide-out animation
     setError(null);
   };
 
@@ -109,7 +104,6 @@ const Team = () => {
         "http://localhost:3000/hr-management/leader/add",
         newUser
       );
-      console.log("New leader added:", response.data);
       setLeaders([...leaders, newUser]);
       setLoading(false);
       handleCloseForm();
@@ -128,7 +122,6 @@ const Team = () => {
         `http://localhost:3000/hr-management/leader/edit/${editUser.id}`,
         editUser
       );
-      console.log("Leader updated:", response.data);
       setLeaders(
         leaders.map((leader) => (leader.id === editUser.id ? editUser : leader))
       );
@@ -144,11 +137,9 @@ const Team = () => {
   const handleDelete = async (id) => {
     setLoading(true);
     try {
-      console.log(`Deleting leader with ID: ${id}`);
       await axios.delete(
         `http://localhost:3000/hr-management/leader/delete/${id}`
       );
-      console.log("Leader deleted");
       setLeaders(leaders.filter((leader) => leader.id !== id));
     } catch (error) {
       console.error(
@@ -215,7 +206,11 @@ const Team = () => {
       )}
 
       {showForm && (
-        <div className="w-full fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div
+          className={`fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 transition-transform duration-300 ${
+            isSlideOut ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
           <div className="bg-gray-100 p-6 rounded-lg shadow-2xl dark:bg-gray-800 w-full max-w-md">
             <h2 className="w-full text-xl font-bold mb-4">Add New Leader</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -271,17 +266,17 @@ const Team = () => {
                 ) : (
                   <p>Drag 'n' drop an image here, or click to select one</p>
                 )}
-                {newUser.image && (
-                  <img
-                    src={newUser.image}
-                    alt="Preview"
-                    className="mt-4 w-32 h-32 object-cover rounded-md"
-                  />
-                )}
               </div>
+              {newUser.image && (
+                <img
+                  src={newUser.image}
+                  alt="Selected"
+                  className="w-24 h-24 object-cover rounded-md mb-4"
+                />
+              )}
               <button
                 type="submit"
-                className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                 disabled={loading}
               >
                 {loading ? "Adding..." : "Add Leader"}
@@ -289,7 +284,7 @@ const Team = () => {
               <button
                 type="button"
                 onClick={handleCloseForm}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2"
+                className="ml-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
               >
                 Cancel
               </button>
@@ -299,7 +294,11 @@ const Team = () => {
       )}
 
       {editForm && (
-        <div className="w-full fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div
+          className={`fixed inset-0 ml-52 flex items-center justify-center bg-gray-800 bg-opacity-10 transition-transform duration-300 ${
+            isSlideOut ? "translate-x-0" : "translate-x-100"
+          }`}
+        >
           <div className="bg-gray-100 p-6 rounded-lg shadow-2xl dark:bg-gray-800 w-full max-w-md">
             <h2 className="w-full text-xl font-bold mb-4">Edit Leader</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -355,17 +354,17 @@ const Team = () => {
                 ) : (
                   <p>Drag 'n' drop an image here, or click to select one</p>
                 )}
-                {editUser.image && (
-                  <img
-                    src={editUser.image}
-                    alt="Preview"
-                    className="mt-4 w-32 h-32 object-cover rounded-md"
-                  />
-                )}
               </div>
+              {editUser.image && (
+                <img
+                  src={editUser.image}
+                  alt="Selected"
+                  className="w-24 h-24 object-cover rounded-md mb-4"
+                />
+              )}
               <button
                 type="submit"
-                className="bg-gray-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                 disabled={loading}
               >
                 {loading ? "Updating..." : "Update Leader"}
@@ -373,7 +372,7 @@ const Team = () => {
               <button
                 type="button"
                 onClick={handleCloseEditForm}
-                className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2"
+                className="ml-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
               >
                 Cancel
               </button>

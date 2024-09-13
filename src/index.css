@@ -5,3 +5,33 @@
 * {
   @apply transition-colors duration-200;
 }
+/* CSS for sliding out animation */
+/* @keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.fixed {
+  position: fixed;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.transition-transform {
+  transition: transform 0.3s ease-in-out;
+} */

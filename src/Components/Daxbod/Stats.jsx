@@ -1,13 +1,6 @@
-import React from "react";
-
-import {
-  IoIosStats,
-  IoIosSettings,
-  IoIosPerson,
-  IoIosPersonAdd,
-  IoIosEyeOff,
-} from "react-icons/io";
+import { IoIosPerson, IoIosPersonAdd, IoIosEyeOff } from "react-icons/io";
 import Balance from "./Balance";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 const Stats = ({ darkMode }) => {
   const empolyeesData = [
@@ -37,7 +30,7 @@ const Stats = ({ darkMode }) => {
         {empolyeesData.map((data, index) => (
           <div
             key={index}
-            className="bg-white p-6 rounded-2xl flex items-center gap-4 dark:bg-gray-900 dark:text-gray-400"
+            className="bg-white p-6 rounded-2xl flex items-center gap-4 dark:bg-gray-900 dark:text-gray-400 relative"
           >
             <span
               className={`${data.bgColor} px-3 py-6 text-2xl rounded-2xl dark:bg-gray-500`}
@@ -50,6 +43,9 @@ const Stats = ({ darkMode }) => {
               </h2>
               <p className="font-bold">{data.title}</p>
             </div>
+            <button className="absolute top-3 right-3 p-2 dark:text-gray-300 text-2xl text-gray-500 cursor-pointer">
+              <IoAddCircleOutline />
+            </button>
           </div>
         ))}
       </div>
