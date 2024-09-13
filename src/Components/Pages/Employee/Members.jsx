@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import Title from "../../Daxbod/Title";
 import SearchBar from "./SearchBar";
 import DepartmentFilter from "./DepartmentFilter";
-// import { MdCancel } from "react-icons/md";
 import { IoMdPersonAdd } from "react-icons/io";
 import axios from "axios";
 import { TbListDetails } from "react-icons/tb";
@@ -29,13 +28,12 @@ const fieldLabels = {
   employment_type: "Employment Type",
 };
 
-const Members = ({ onDetailsClick }) => {
+const Members = ({ onDetailsClick, darkMode }) => {
   const [dataFromDb, setDataFromDb] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [newEmployee, setNewEmployee] = useState({
     empId: "",
-    id: "",
     name: "",
     doj: "",
     designation: "",
@@ -45,7 +43,7 @@ const Members = ({ onDetailsClick }) => {
     userEmail: "",
     folderName: "",
     password: "",
-    is_admin: "No", // Default value for is_admin
+    is_admin: "No",
     phone_no: "",
     dob: "",
     country: "",
@@ -62,7 +60,6 @@ const Members = ({ onDetailsClick }) => {
         const res = await axios.get(
           "http://localhost:3000/hr-management/emp/all-employee"
         );
-        console.log(res);
         if (Array.isArray(res.data)) {
           setDataFromDb(res.data);
           setFilteredUsers(res.data);
@@ -79,22 +76,36 @@ const Members = ({ onDetailsClick }) => {
     fetchData();
   }, []);
 
+  // Search Filter
+  useEffect(() => {
+    const searchResults = dataFromDb.filter(
+      (employee) =>
+        employee.name.toLowerCase().includes(query.toLowerCase()) ||
+        employee.empId.toLowerCase().includes(query.toLowerCase())
+    );
+
+    const departmentFilteredResults = selectedDepartments.length
+      ? searchResults.filter((employee) =>
+          selectedDepartments.includes(employee.dept)
+        )
+      : searchResults;
+
+    setFilteredUsers(departmentFilteredResults);
+  }, [query, selectedDepartments, dataFromDb]);
+
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      console.log("Submitting employee data:", newEmployee);
 
       try {
         if (editingEmployee) {
           const res = await axios.put(
-            `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.id}`, // Use empId
+            `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.empId}`,
             newEmployee
           );
-          console.log("Update response:", res.data);
-
           setDataFromDb((prevUsers) =>
             prevUsers.map((user) =>
-              user.empId === newEmployee.id ? res.data : user
+              user.empId === newEmployee.empId ? res.data : user
             )
           );
           setEditingEmployee(null);
@@ -103,7 +114,6 @@ const Members = ({ onDetailsClick }) => {
             "http://localhost:3000/hr-management/emp/add-employee",
             newEmployee
           );
-          console.log("Add response:", res.data);
           setDataFromDb((prevUsers) => [...prevUsers, res.data]);
         }
       } catch (err) {
@@ -153,23 +163,22 @@ const Members = ({ onDetailsClick }) => {
     setFilteredUsers(dataFromDb);
   };
 
-  const handleRemoveEmployee = async (id) => {
+  const handleRemoveEmployee = async (empId) => {
     try {
       await axios.delete(
-        `http://localhost:3000/hr-management/emp/delete-employee/${id}`
+        `http://localhost:3000/hr-management/emp/delete-employee/${empId}`
       );
-      setDataFromDb((prev) => prev.filter((user) => user.id !== id));
-      setFilteredUsers((prev) => prev.filter((user) => user.id !== id));
+      setDataFromDb((prev) => prev.filter((user) => user.empId !== empId));
+      setFilteredUsers((prev) => prev.filter((user) => user.empId !== empId));
     } catch (err) {
       console.error(`Error removing employee: ${err}`);
     }
   };
 
   const handleEditEmployee = (employee) => {
-    setEditingEmployee(employee); // Mark the employee as being edited
+    setEditingEmployee(employee);
     setNewEmployee({
       empId: employee.empId || "",
-      id: employee.id || "",
       name: employee.name || "",
       doj: employee.doj || "",
       designation: employee.designation || "",
@@ -178,148 +187,193 @@ const Members = ({ onDetailsClick }) => {
       role: employee.role || "",
       userEmail: employee.userEmail || "",
       folderName: employee.folderName || "",
-      password: "", // Clear password for security reasons
+      password: "",
       is_admin: employee.is_admin || "No",
       phone_no: employee.phone_no || "",
       dob: employee.dob || "",
       country: employee.country || "",
       employment_type: employee.employment_type || "",
     });
-    setShowForm(true); // Display the form for editing
+    setShowForm(true);
   };
 
   const handleShowDetails = (employee) => {
     setSelectedEmployee(employee);
   };
 
+  const handleCloseDetails = () => {
+    setSelectedEmployee(null);
+  };
+
   return (
-    <div>
-      <Title title="Employee Management" />
-      <SearchBar query={query} setQuery={setQuery} />
-      <DepartmentFilter
-        selectedDepartments={selectedDepartments}
-        onCheckboxChange={handleCheckboxChange}
-        departments={Array.from(
-          new Set(dataFromDb.map((employee) => employee.dept))
-        )}
-      />
-      <button
-        onClick={() => setShowForm(true)}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center"
-      >
-        <IoMdPersonAdd className="mr-2" /> Add Employee
-      </button>
+    <div className="p-4 min-w-full">
+      <div className="flex flex-wrap justify-between items-center mb-4">
+        {/* Left Section: Title */}
+        <div>
+          <Title>Employee</Title>
+        </div>
+
+        {/* Right Section: Search Bar, Department Filter, and Add Button */}
+        <div className="flex gap-3 items-center">
+          {/* Search Bar */}
+          <SearchBar query={query} setQuery={setQuery} />
+
+          {/* Department Filter */}
+          <DepartmentFilter
+            selectedDepartments={selectedDepartments}
+            onCheckboxChange={handleCheckboxChange}
+            departments={Array.from(
+              new Set(dataFromDb.map((employee) => employee.dept))
+            )}
+          />
+
+          {/* Add Employee Button */}
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-gray-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-700 transition-colors duration-200"
+          >
+            <IoMdPersonAdd className="text-lg" />
+          </button>
+        </div>
+      </div>
+
       {showForm && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 transition-opacity duration-300 ease-in-out">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-3xl grid grid-cols-2 gap-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl h-[70vh] overflow-auto relative  dark:bg-gray-600">
             <button
               type="button"
-              className="absolute top-[100px] right-[500px] text-gray-600 bg-black hover:text-gray-900 transition-colors duration-200"
+              className="absolute top-8 right-12 text-gray-600 hover:text-gray-900 dark:text-gray-200"
               onClick={() => setShowForm(false)}
             >
-              <SlClose size={50} />
+              <SlClose size={24} />
             </button>
-            <h2 className="col-span-2 text-lg font-semibold mb-3 text-gray-800">
-              {editingEmployee ? "Edit Employee" : "Add Employee"}
-            </h2>
-            {Object.keys(fieldLabels).map((key, index) => {
-              if (key !== "image") {
-                const isRightSide = index % 2 === 1; // Alternates between left and right
-                return (
-                  <div
-                    key={key}
-                    className={`mb-2 ${
-                      isRightSide ? "col-start-2" : "col-start-1"
-                    }`}
-                  >
-                    <label
-                      htmlFor={key}
-                      className="block text-gray-700 mb-1 font-medium text-xs"
-                    >
-                      {fieldLabels[key]}
-                    </label>
-                    <input
-                      type={key === "password" ? "password" : "text"}
-                      id={key}
-                      name={key}
-                      value={newEmployee[key] || ""}
-                      onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-xs"
-                    />
-                  </div>
-                );
-              }
-              return null;
-            })}
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-1 rounded-md col-span-2 mt-3 hover:bg-blue-700 transition-colors duration-200 text-xs"
+
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4 h-full overflow-y-auto "
             >
-              {editingEmployee ? "Update Employee" : "Add Employee"}
-            </button>
+              <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                {editingEmployee ? "Edit Employee" : "Add Employee"}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                {Object.keys(fieldLabels).map(
+                  (key) =>
+                    key !== "image" && (
+                      <div key={key} className="flex flex-col ">
+                        <label
+                          htmlFor={key}
+                          className="text-gray-700 font-medium text-sm mb-1 dark:text-gray-200"
+                        >
+                          {fieldLabels[key]}
+                        </label>
+                        <input
+                          type={key === "password" ? "password" : "text"}
+                          id={key}
+                          name={key}
+                          value={newEmployee[key] || ""}
+                          onChange={handleFormChange}
+                          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200 text-sm dark:text-gray-200 dark:bg-gray-600"
+                        />
+                      </div>
+                    )
+                )}
+              </div>
+              <button
+                type="submit"
+                className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 text-sm"
+              >
+                {editingEmployee ? "Update Employee" : "Add Employee"}
+              </button>
+            </form>
           </div>
         </div>
       )}
 
-      <div className="mt-4">
-        <h2 className="text-xl font-semibold mb-2">Employee List</h2>
-        <table className="w-full border border-gray-300 rounded-lg">
-          <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="p-2">Actions</th>
-              {Object.keys(fieldLabels).map((key) => (
-                <th key={key} className="p-2">
-                  {fieldLabels[key]}
-                </th>
-              ))}
+      {/* Employee Table */}
+      <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden dark:bg-gray-600 ">
+        <thead>
+          <tr className="bg-gray-200 text-gray-600 text-sm leading-normal dark:text-gray-300">
+            <th className="py-3 px-6 text-left dark:text-gray-700">
+              Employee ID
+            </th>
+            <th className="py-3 px-6 text-left dark:text-gray-700">Name</th>
+            <th className="py-3 px-6 text-left dark:text-gray-700">
+              Designation
+            </th>
+            <th className="py-3 px-6 text-left dark:text-gray-700">
+              Department
+            </th>
+            <th className="py-3 px-6 text-left dark:text-gray-700">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="text-gray-600 text-sm dark:text-gray-100">
+          {filteredUsers.map((employee) => (
+            <tr
+              key={employee.empId}
+              className="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-400"
+            >
+              <td className="py-3 px-6">{employee.empId}</td>
+              <td className="py-3 px-6">{employee.name}</td>
+              <td className="py-3 px-6">{employee.designation}</td>
+              <td className="py-3 px-6">{employee.dept}</td>
+              <td className="py-3 px-6 flex gap-2">
+                <button
+                  onClick={() => handleEditEmployee(employee)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <FiEdit />
+                </button>
+                <button
+                  onClick={() => handleRemoveEmployee(employee.empId)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <AiOutlineDelete />
+                </button>
+                <button
+                  onClick={() => handleShowDetails(employee)}
+                  className="text-green-500 hover:text-green-700"
+                >
+                  <TbListDetails />
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.empId}>
-                <td className="p-2 flex items-center space-x-2">
-                  <button
-                    onClick={() => handleEditEmployee(user)}
-                    className="text-blue-500"
-                  >
-                    <FiEdit />
-                  </button>
-                  <button
-                    onClick={() => handleRemoveEmployee(user.empId)}
-                    className="text-red-500"
-                  >
-                    <AiOutlineDelete />
-                  </button>
-                  <button
-                    onClick={() => handleShowDetails(user)}
-                    className="text-green-500"
-                  >
-                    <TbListDetails />
-                  </button>
-                </td>
-                {Object.keys(fieldLabels).map((key) => (
-                  <td key={key} className="p-2">
-                    {user[key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {selectedEmployee && (
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold">Employee Details</h3>
-            <div className="border border-gray-300 p-4 rounded-lg">
-              {Object.keys(fieldLabels).map((key) => (
-                <div key={key} className="mb-2">
-                  <span className="font-semibold">{fieldLabels[key]}:</span>{" "}
-                  {selectedEmployee[key]}
-                </div>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Employee Details Modal */}
+      {selectedEmployee && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-70 z-50 ">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl h-[70vh] overflow-auto relative dark:bg-gray-600">
+            {/* Close Button */}
+            <button
+              type="button"
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 dark:text-gray-300 z-50"
+              onClick={handleCloseDetails}
+            >
+              <SlClose size={24} />
+            </button>
+
+            {/* Modal Content */}
+            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-300">
+              Employee Details
+            </h2>
+            <ul className="space-y-2 dark:text-gray-300">
+              {Object.keys(selectedEmployee).map((key) => (
+                <li
+                  key={key}
+                  className="flex justify-between dark:text-gray-300"
+                >
+                  <span className="font-medium text-gray-600 dark:text-gray-300">
+                    {fieldLabels[key] || key}:
+                  </span>
+                  <span>{selectedEmployee[key]}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

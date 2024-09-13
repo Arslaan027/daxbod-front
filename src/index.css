@@ -35,3 +35,17 @@
 .transition-transform {
   transition: transform 0.3s ease-in-out;
 } */
+
+.table-container {
+  width: 100%;
+  overflow-x: hidden; /* Remove horizontal scrolling */
+}
+
+.table-container table {
+  width: 100%;
+  table-layout: fixed; /* Ensures the table fits the container */
+}
+
+.table-container th, .table-container td {
+  font-size: 0.75rem; /* Adjust font size for smaller text */
+}
