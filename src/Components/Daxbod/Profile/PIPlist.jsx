@@ -22,13 +22,18 @@ const PIPlist = ({ darkMode }) => {
         const res = await axios.get(
           "http://localhost:3000/hr-management/PIP/get-pip"
         );
+        console.log("API Response:", res.data); // Log the entire response
 
-        if (Array.isArray(res.data[0])) {
-          setEmployees(res.data[0]); // Use res.data directly if it’s an array of PIP records
+        // Extract PIP entries from the response
+        if (
+          Array.isArray(res.data) &&
+          res.data.length > 0 &&
+          Array.isArray(res.data[0])
+        ) {
+          setEmployees(res.data[0]); // Set employees with the first sub-array
         } else {
           throw new Error("API response is not in the expected format.");
         }
-        console.log(res.data[0]);
       } catch (err) {
         console.error(`Error fetching data: ${err}`);
         setError("Failed to load data. Please try again.");
@@ -46,6 +51,7 @@ const PIPlist = ({ darkMode }) => {
           "http://localhost:3000/hr-management/PIP/add-pip",
           employee
         );
+        console.log("Submitted Data:", res.data); // Log the submitted data
         setDataFromDb((prev) => [...prev, res.data]);
         resetForm();
       } catch (error) {
@@ -73,8 +79,8 @@ const PIPlist = ({ darkMode }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 w-full max-h-[90vh] overflow-y-auto mx-auto">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col gap-4 p-4 w-full max-h-fit overflow-y-hidden mx-auto">
+      <div className="flex justify-between items-center">
         <Title>PIP Employees</Title>
         <button
           className="text-gray-500 py-2 px-4 rounded-full flex items-center justify-center"
@@ -91,7 +97,6 @@ const PIPlist = ({ darkMode }) => {
           onSubmit={handleSubmit}
           className="bg-gray-200 p-4 rounded-lg mb-4"
         >
-          {/* Form fields */}
           <div className="mb-2">
             <label htmlFor="empId" className="block mb-1">
               Employee ID
@@ -113,7 +118,7 @@ const PIPlist = ({ darkMode }) => {
               name="description"
               value={employee.description}
               onChange={handleChange}
-              className="p-2 border rounded w-full"
+              className="p-2 text-black border rounded w-full"
               required
             />
           </div>
@@ -165,22 +170,34 @@ const PIPlist = ({ darkMode }) => {
       )}
 
       {employees.length > 0 && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">PIP Employees:</h2>
-          {employees.map((emp, index) => (
-            <div
-              key={emp.id || index}
-              className={`bg-white rounded-lg p-4 shadow-lg ${
-                darkMode ? "dark:text-gray-100 dark:bg-gray-900" : ""
-              }`}
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-100">
-                {emp.name}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-100">{emp.position}</p>
-            </div>
-          ))}
+        <div className="mt-4 overflow-y-auto max-h-screen">
+          <div className="w-full min-w-max">
+            {employees.map((emp, index) => (
+              <div
+                key={emp.id || index}
+                className={`bg-white rounded-lg p-4 shadow-lg mb-4 ${
+                  darkMode ? "dark:text-gray-100 dark:bg-gray-900" : ""
+                }`}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-100">
+                  {emp.empId} {/* Display Employee ID */}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-100">
+                  {emp.description}
+                </p>
+                <p className="text-gray-600 dark:text-gray-100">
+                  Start Date: {new Date(emp.startDate).toLocaleDateString()}
+                </p>
+                <p className="text-gray-600 dark:text-gray-100">
+                  End Date: {new Date(emp.endDate).toLocaleDateString()}
+                </p>
+                <p className="text-gray-600 dark:text-gray-100">
+                  Status: {emp.status}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -194,8 +211,8 @@ const PIPlist = ({ darkMode }) => {
             >
               <p>Employee ID: {pip.empId}</p>
               <p>Description: {pip.description}</p>
-              <p>Start Date: {pip.startDate}</p>
-              <p>End Date: {pip.endDate}</p>
+              <p>Start Date: {new Date(pip.startDate).toLocaleDateString()}</p>
+              <p>End Date: {new Date(pip.endDate).toLocaleDateString()}</p>
               <p>Status: {pip.status}</p>
             </div>
           ))}

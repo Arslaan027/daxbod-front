@@ -8,7 +8,7 @@ import { IoMdPersonAdd } from "react-icons/io";
 
 const Profile = () => {
   return (
-    <div className="px-2 py-4 bg-white rounded-lg w-full dark:bg-gray-900 lg:w-60 xl:w-80 flex flex-col gap-4 bg-">
+    <div className="px-2 py-4 bg-white rounded-lg w-full dark:bg-gray-900 lg:w-60 xl:w-80 flex flex-col gap-4">
       <PIPlist />
       {/* <User />
       <ShortCut />
