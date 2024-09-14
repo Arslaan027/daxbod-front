@@ -17,6 +17,146 @@ import LMS from "./Components/Pages/LMS/LMS";
 import JobApplication from "./Components/Pages/Job-Application/JobApplication";
 import Form from "../src/Components/Pages/ApplicationForm/Applicationform";
 import Team from "./Components/Daxbod/Team";
+import UserDaxbod from "./Components/UserDaxbod/UserDaxbod";
+import Financial from "./Components/UserFinancialReport/Financial";
+import FeedbackSupport from "./Components/UserExtraPages/FeedbackSupport";
+import CompliancePolicies from "./Components/UserExtraPages/CompliancePolicies";
+import CompanyAnnouncements from "./Components/UserExtraPages/CompanyAnnouncements";
+
+const salaryData = [
+  {
+    month: "April 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "May 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "June 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "July 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "August 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "September 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "October 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "November 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "December 2024",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "January 2025",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "February 2025",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+  {
+    month: "March 2025",
+    basic: 15000,
+    hra: 6000,
+    medicalAllowance: 1250,
+    foodAllowance: 1000,
+    conveyance: 1600,
+    educationAllowance: 150,
+    incentives: 2500,
+    total: 27500,
+  },
+];
 
 function App() {
   const [darkMode, setDarkMode] = React.useState(
@@ -39,10 +179,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />{" "}
-        <Route path="/job-application" element={<JobApplication />} />
-        <Route path="/application-form" element={<Form />} />
-        {/* Protected Routes */}
+        <Route path="/signup" element={<Signup />} /> {/* Protected Routes */}
         {isAuthenticated ? (
           <Route
             path="/"
@@ -57,6 +194,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="/employee" element={<Employee />} />
+            <Route path="/user" element={<UserDaxbod />} />
             <Route path="/payroll" element={<Payroll />} />
             <Route path="/lms" element={<LMS />} />
             <Route
@@ -67,6 +205,21 @@ function App() {
             <Route path="/payroll/:id" element={<Payroll />} />
             <Route path="/employee/:id" element={<Employee />} />
             <Route path="/Inventory" element={<Inventory />} />
+            <Route path="/job-application" element={<JobApplication />} />
+            <Route path="/application-form" element={<Form />} />
+            <Route path="/feedback" element={<FeedbackSupport />} />
+            <Route
+              path="/compliance-policies"
+              element={<CompliancePolicies />}
+            />
+            <Route
+              path="/company-announcements"
+              element={<CompanyAnnouncements />}
+            />
+            <Route
+              path="/financial-report"
+              element={<Financial salaryData={salaryData} />}
+            />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" />} />
