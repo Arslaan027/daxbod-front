@@ -8,7 +8,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [empId, setEmpId] = useState(""); // New state for Employee ID
+  const [empId, setEmpId] = useState("");
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("theme") === "dark"
   );
@@ -36,19 +36,26 @@ const Login = () => {
         }
       );
       console.log(response);
+
       if (
         response.status === 200 &&
         response.data.message === "Login successful"
       ) {
+        // Store the token in localStorage
         localStorage.setItem("loggedin", "true");
         localStorage.setItem("token", response.data.token);
-        navigate("/");
+
+        // Navigate to the home page
+        navigate("/"); // Ensure this redirects to the home page
       } else {
         alert("Wrong Credentials or error occurred during login");
       }
     } catch (error) {
       alert("Wrong Credentials or error occurred during login.");
-      console.error("Login error:", error.response.data.message);
+      console.error(
+        "Login error:",
+        error.response?.data?.message || error.message
+      );
     }
   };
 

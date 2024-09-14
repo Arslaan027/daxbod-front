@@ -22,7 +22,7 @@ const PIPlist = ({ darkMode }) => {
         const res = await axios.get(
           "http://localhost:3000/hr-management/PIP/get-pip"
         );
-        console.log("API Response:", res.data[0]);
+        // console.log("API Response:", res.data[0]);
 
         // Extract PIP entries from the response
         if (
@@ -51,7 +51,7 @@ const PIPlist = ({ darkMode }) => {
           "http://localhost:3000/hr-management/PIP/add-pip",
           employee
         );
-        console.log("Submitted Data:", res.data); // Log the submitted data
+        // console.log("Submitted Data:", res.data); // Log the submitted data
         setDataFromDb((prev) => [...prev, res.data]);
         resetForm();
       } catch (error) {
@@ -184,10 +184,10 @@ const PIPlist = ({ darkMode }) => {
                   {emp.empId} {/* Display Employee ID */}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-100">
-                  {emp.description}
+                  {/* {emp.description} */}
                 </p>
                 <p className="text-gray-600 dark:text-gray-100">
-                  Start Date: {new Date(emp.startDate).toLocaleDateString()}
+                  {/* Start Date: {new Date(emp.startDate).toLocaleDateString()} */}
                 </p>
                 <p className="text-gray-600 dark:text-gray-100">
                   End Date: {new Date(emp.endDate).toLocaleDateString()}

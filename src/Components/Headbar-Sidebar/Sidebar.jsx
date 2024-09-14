@@ -13,6 +13,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       text: "Dashboard",
     },
     {
+      to: "/user",
+      icon: FaUsersCog,
+      text: "User Dashboard",
+    },
+    {
       to: "/employee",
       icon: FaCalendarAlt,
       text: "Employee",

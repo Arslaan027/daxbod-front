@@ -17,6 +17,7 @@ import LMS from "./Components/Pages/LMS/LMS";
 import JobApplication from "./Components/Pages/Job-Application/JobApplication";
 import Form from "../src/Components/Pages/ApplicationForm/Applicationform";
 import Team from "./Components/Daxbod/Team";
+import UserDaxbod from "./Components/UserDaxbod/UserDaxbod";
 
 function App() {
   const [darkMode, setDarkMode] = React.useState(
@@ -39,10 +40,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />{" "}
-        <Route path="/job-application" element={<JobApplication />} />
-        <Route path="/application-form" element={<Form />} />
-        {/* Protected Routes */}
+        <Route path="/signup" element={<Signup />} /> {/* Protected Routes */}
         {isAuthenticated ? (
           <Route
             path="/"
@@ -57,6 +55,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="/employee" element={<Employee />} />
+            <Route path="/user" element={<UserDaxbod />} />
             <Route path="/payroll" element={<Payroll />} />
             <Route path="/lms" element={<LMS />} />
             <Route
@@ -67,6 +66,8 @@ function App() {
             <Route path="/payroll/:id" element={<Payroll />} />
             <Route path="/employee/:id" element={<Employee />} />
             <Route path="/Inventory" element={<Inventory />} />
+            <Route path="/job-application" element={<JobApplication />} />
+            <Route path="/application-form" element={<Form />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" />} />
