@@ -1,7 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaUsersCog, FaListAlt } from "react-icons/fa";
-import { IoIosLogIn } from "react-icons/io";
+import {
+  FaTachometerAlt,
+  FaChartLine,
+  FaUsers,
+  FaBookOpen,
+  FaComments,
+  FaFileContract,
+  FaBullhorn,
+  FaBoxes,
+  FaBriefcase,
+  FaClipboardList,
+} from "react-icons/fa";
+import { IoIosLogIn, IoIosPersonAdd } from "react-icons/io";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const isLoggedIn = localStorage.getItem("loggedin");
@@ -9,17 +20,22 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const links = [
     {
       to: "/",
-      icon: FaUsersCog,
+      icon: FaTachometerAlt,
       text: "Dashboard",
     },
     {
       to: "/user",
-      icon: FaUsersCog,
-      text: "User Dashboard",
+      icon: FaTachometerAlt,
+      text: "Dashboard (USER)",
+    },
+    {
+      to: "/financial-report",
+      icon: FaChartLine,
+      text: "Financial Report (USER)",
     },
     {
       to: "/employee",
-      icon: FaCalendarAlt,
+      icon: FaUsers,
       text: "Employee",
       badge: {
         text: " ",
@@ -29,22 +45,37 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     },
     {
       to: "/lms",
-      icon: FaListAlt,
+      icon: FaBookOpen,
       text: "LMS",
     },
     {
-      to: "/Inventory",
-      icon: FaListAlt,
+      to: "/feedback",
+      icon: FaComments,
+      text: "Feedback",
+    },
+    {
+      to: "/compliance-policies",
+      icon: FaFileContract,
+      text: "Compliance Policies",
+    },
+    {
+      to: "/company-announcements",
+      icon: FaBullhorn,
+      text: "Announcements",
+    },
+    {
+      to: "/inventory",
+      icon: FaBoxes,
       text: "Inventory",
     },
     {
       to: "/job-application",
-      icon: FaListAlt,
+      icon: FaBriefcase,
       text: "Job Application",
     },
     {
       to: "/application-form",
-      icon: FaListAlt,
+      icon: FaClipboardList,
       text: "Application Form",
     },
   ];
@@ -57,7 +88,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     },
     {
       to: "/signup",
-      icon: IoIosLogIn,
+      icon: IoIosPersonAdd,
       text: "Sign Up",
     },
   ];
