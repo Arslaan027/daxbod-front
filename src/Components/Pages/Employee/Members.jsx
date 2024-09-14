@@ -35,7 +35,7 @@ const Members = ({ onDetailsClick }) => {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [newEmployee, setNewEmployee] = useState({
     empId: "",
-    id: "",
+    // id: "",
     name: "",
     doj: "",
     designation: "",
@@ -50,6 +50,7 @@ const Members = ({ onDetailsClick }) => {
     dob: "",
     country: "",
     employment_type: "",
+    imageFile: null,
   });
   const [query, setQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -84,11 +85,23 @@ const Members = ({ onDetailsClick }) => {
       e.preventDefault();
       console.log("Submitting employee data:", newEmployee);
 
+      const formData = new FormData();
+      // Append all form fields to FormData
+      Object.keys(newEmployee).forEach((key) => {
+        formData.append(key, newEmployee[key]);
+      });
+
+      // Append the image file
+      if (newEmployee.imageFile) {
+        formData.append("image", newEmployee.imageFile);
+      }
+
       try {
         if (editingEmployee) {
           const res = await axios.put(
-            `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.id}`, // Use empId
-            newEmployee
+            `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.id}`,
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } } // Set the header for multipart/form-data
           );
           console.log("Update response:", res.data);
 
@@ -101,7 +114,8 @@ const Members = ({ onDetailsClick }) => {
         } else {
           const res = await axios.post(
             "http://localhost:3000/hr-management/emp/add-employee",
-            newEmployee
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } } // Set the header for multipart/form-data
           );
           console.log("Add response:", res.data);
           setDataFromDb((prevUsers) => [...prevUsers, res.data]);
@@ -128,6 +142,7 @@ const Members = ({ onDetailsClick }) => {
         dob: "",
         country: "",
         employment_type: "",
+        imageFile: null, // Reset image file after submission
       });
       setShowForm(false);
     },
@@ -245,6 +260,30 @@ const Members = ({ onDetailsClick }) => {
                       value={newEmployee[key] || ""}
                       onChange={handleFormChange}
                       className="w-full border border-gray-300 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-xs"
+                    />
+                  </div>
+                );
+              }
+              if (key === "image") {
+                return (
+                  <div key={key} className="mb-2 col-span-2">
+                    <label
+                      htmlFor={key}
+                      className="block text-gray-700 mb-1 font-medium text-xs"
+                    >
+                      {fieldLabels[key]}
+                    </label>
+                    <input
+                      type="file"
+                      id={key}
+                      name={key}
+                      onChange={(e) =>
+                        setNewEmployee((prev) => ({
+                          ...prev,
+                          imageFile: e.target.files[0],
+                        }))
+                      }
+                      className="w-full border border-gray-300 rounded-lg p-1.5 text-xs"
                     />
                   </div>
                 );

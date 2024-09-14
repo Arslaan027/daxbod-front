@@ -29,7 +29,25 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const form = new FormData();
+    for (const key in formData) {
+      if (formData[key] !== null && formData[key] !== undefined) {
+        form.append(key, formData[key]);
+      }
+    }
+
+    fetch("http://localhost:3000/hr-management/applicants/form-submit", {
+      method: "POST",
+      body: form,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Form submitted successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+      });
   };
 
   const positions = [
@@ -57,8 +75,8 @@ const Form = () => {
         <form onSubmit={handleSubmit} className="flex flex-wrap -mx-4">
           {/* Section 1 */}
           <div className="w-full md:w-1/2 px-4 mb-5">
-            {/* Name */}
-            <div className="mb-5 ">
+            {/* Full Name */}
+            <div className="mb-5">
               <label
                 htmlFor="name"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
@@ -76,19 +94,38 @@ const Form = () => {
               />
             </div>
 
-            {/* Qualification */}
+            {/* Phone Number */}
             <div className="mb-5">
               <label
-                htmlFor="qualification"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                htmlFor="phoneNumber"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
-                Qualification <span className="text-red-600 font-bold">*</span>
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
+                required
+              />
+            </div>
+
+            {/* Year of Passing */}
+            <div className="mb-5">
+              <label
+                htmlFor="yearOfPassing"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
+              >
+                Year of Passing
               </label>
               <input
                 type="text"
-                id="qualification"
-                name="qualification"
-                value={formData.qualification}
+                id="yearOfPassing"
+                name="yearOfPassing"
+                value={formData.yearOfPassing}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
@@ -99,7 +136,7 @@ const Form = () => {
             <div className="mb-5">
               <label
                 htmlFor="position"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Position Applied For
               </label>
@@ -124,7 +161,7 @@ const Form = () => {
             <div className="mb-5">
               <label
                 htmlFor="location"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Location
               </label>
@@ -139,11 +176,30 @@ const Form = () => {
               />
             </div>
 
-            {/* Resume Upload */}
+            {/* Expected CTC */}
+            <div className="mb-5">
+              <label
+                htmlFor="expectedCTC"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
+              >
+                Expected CTC
+              </label>
+              <input
+                type="text"
+                id="expectedCTC"
+                name="expectedCTC"
+                value={formData.expectedCTC}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
+                required
+              />
+            </div>
+
+            {/* Upload Resume */}
             <div className="mb-5">
               <label
                 htmlFor="resume"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Upload Resume
               </label>
@@ -151,27 +207,8 @@ const Form = () => {
                 type="file"
                 id="resume"
                 name="resume"
-                onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
-                required
-              />
-            </div>
-
-            {/* Date of Birth */}
-            <div className="mb-5">
-              <label
-                htmlFor="dob"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
-              >
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                id="dob"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
+                // onChange={handleFileChange}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none dark:bg-gray-600 dark:text-white"
                 required
               />
             </div>
@@ -179,50 +216,6 @@ const Form = () => {
 
           {/* Section 2 */}
           <div className="w-full md:w-1/2 px-4 mb-5">
-            {/* Year of Passing */}
-            <div className="mb-5">
-              <label
-                htmlFor="yearOfPassing"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
-              >
-                Year of Passing
-              </label>
-              <select
-                id="yearOfPassing"
-                name="yearOfPassing"
-                value={formData.yearOfPassing}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
-                required
-              >
-                <option value="">Select Year</option>
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Phone Number */}
-            <div className="mb-5">
-              <label
-                htmlFor="phoneNumber"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
-              >
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
-                required
-              />
-            </div>
-
             {/* Email */}
             <div className="mb-5">
               <label
@@ -242,11 +235,49 @@ const Form = () => {
               />
             </div>
 
-            {/* LinkedIn */}
+            {/* Qualification */}
+            <div className="mb-5">
+              <label
+                htmlFor="qualification"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
+              >
+                Qualification
+              </label>
+              <input
+                type="text"
+                id="qualification"
+                name="qualification"
+                value={formData.qualification}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
+                required
+              />
+            </div>
+
+            {/* Date of Birth */}
+            <div className="mb-5">
+              <label
+                htmlFor="dob"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
+              >
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
+                required
+              />
+            </div>
+
+            {/* LinkedIn Profile */}
             <div className="mb-5">
               <label
                 htmlFor="linkedin"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 LinkedIn Profile
               </label>
@@ -261,29 +292,11 @@ const Form = () => {
               />
             </div>
 
-            {/* Adhaarcard Upload */}
-            <div className="mb-5">
-              <label
-                htmlFor="Adhaarcard"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
-              >
-                Upload Adhaarcard
-              </label>
-              <input
-                type="file"
-                id="Adhaarcard"
-                name="Adhaarcard"
-                onChange={handleChange}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
-                required
-              />
-            </div>
-
             {/* Prior Experience */}
             <div className="mb-5">
               <label
                 htmlFor="experience"
-                className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Prior Experience
               </label>
@@ -325,7 +338,7 @@ const Form = () => {
                 <div className="mb-5">
                   <label
                     htmlFor="currentCTC"
-                    className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
+                    className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
                   >
                     Current CTC
                   </label>
@@ -335,26 +348,7 @@ const Form = () => {
                     name="currentCTC"
                     value={formData.currentCTC}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-
-                {/* Expected CTC */}
-                <div className="mb-5">
-                  <label
-                    htmlFor="expectedCTC"
-                    className="block text-gray-700 text-sm font-medium mb-1"
-                  >
-                    Expected CTC
-                  </label>
-                  <input
-                    type="text"
-                    id="expectedCTC"
-                    name="expectedCTC"
-                    value={formData.expectedCTC}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                     required
                   />
                 </div>
