@@ -34,6 +34,8 @@ const Members = ({ onDetailsClick, darkMode }) => {
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [newEmployee, setNewEmployee] = useState({
     empId: "",
+    // id: "",
+
     name: "",
     doj: "",
     designation: "",
@@ -48,6 +50,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
     dob: "",
     country: "",
     employment_type: "",
+    imageFile: null,
   });
   const [query, setQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -97,11 +100,24 @@ const Members = ({ onDetailsClick, darkMode }) => {
     async (e) => {
       e.preventDefault();
 
+      const formData = new FormData();
+      // Append all form fields to FormData
+      Object.keys(newEmployee).forEach((key) => {
+        formData.append(key, newEmployee[key]);
+      });
+
+      // Append the image file
+      if (newEmployee.imageFile) {
+        formData.append("image", newEmployee.imageFile);
+      }
+
       try {
         if (editingEmployee) {
           const res = await axios.put(
+
             `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.empId}`,
             newEmployee
+
           );
           setDataFromDb((prevUsers) =>
             prevUsers.map((user) =>
@@ -112,7 +128,8 @@ const Members = ({ onDetailsClick, darkMode }) => {
         } else {
           const res = await axios.post(
             "http://localhost:3000/hr-management/emp/add-employee",
-            newEmployee
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } } // Set the header for multipart/form-data
           );
           setDataFromDb((prevUsers) => [...prevUsers, res.data]);
         }
@@ -138,6 +155,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
         dob: "",
         country: "",
         employment_type: "",
+        imageFile: null, // Reset image file after submission
       });
       setShowForm(false);
     },
@@ -247,10 +265,10 @@ const Members = ({ onDetailsClick, darkMode }) => {
             >
               <SlClose size={24} />
             </button>
-
             <form
               onSubmit={handleSubmit}
               className="space-y-4 h-full overflow-y-auto "
+
             >
               <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
                 {editingEmployee ? "Edit Employee" : "Add Employee"}
