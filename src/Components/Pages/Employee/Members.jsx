@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import Title from "../../Daxbod/Title";
 import SearchBar from "./SearchBar";
 import DepartmentFilter from "./DepartmentFilter";
@@ -8,6 +8,7 @@ import { TbListDetails } from "react-icons/tb";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { SlClose } from "react-icons/sl";
+import AuthContext from "../../AuthContext";
 
 // Mapping for field names to labels
 const fieldLabels = {
@@ -29,13 +30,14 @@ const fieldLabels = {
 };
 
 const Members = ({ onDetailsClick, darkMode }) => {
+  const { user } = useContext(AuthContext); // Use AuthContext to get user data
+  const userRole = user?.role || localStorage.getItem("role"); // Get the role of the current user from AuthContext or localStorage
+
   const [dataFromDb, setDataFromDb] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [newEmployee, setNewEmployee] = useState({
     empId: "",
-    // id: "",
-
     name: "",
     doj: "",
     designation: "",
@@ -99,14 +101,16 @@ const Members = ({ onDetailsClick, darkMode }) => {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+      if (userRole !== "ADMIN") {
+        console.error("You do not have permission to perform this action.");
+        return;
+      }
 
       const formData = new FormData();
-      // Append all form fields to FormData
       Object.keys(newEmployee).forEach((key) => {
         formData.append(key, newEmployee[key]);
       });
 
-      // Append the image file
       if (newEmployee.imageFile) {
         formData.append("image", newEmployee.imageFile);
       }
@@ -127,7 +131,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
           const res = await axios.post(
             "http://localhost:3000/hr-management/emp/add-employee",
             formData,
-            { headers: { "Content-Type": "multipart/form-data" } } // Set the header for multipart/form-data
+            { headers: { "Content-Type": "multipart/form-data" } }
           );
           setDataFromDb((prevUsers) => [...prevUsers, res.data]);
         }
@@ -153,11 +157,11 @@ const Members = ({ onDetailsClick, darkMode }) => {
         dob: "",
         country: "",
         employment_type: "",
-        imageFile: null, // Reset image file after submission
+        imageFile: null,
       });
       setShowForm(false);
     },
-    [newEmployee, editingEmployee]
+    [newEmployee, editingEmployee, userRole]
   );
 
   const handleFormChange = (e) => {
@@ -180,6 +184,11 @@ const Members = ({ onDetailsClick, darkMode }) => {
   };
 
   const handleRemoveEmployee = async (empId) => {
+    if (userRole !== "ADMIN") {
+      console.error("You do not have permission to perform this action.");
+      return;
+    }
+
     try {
       await axios.delete(
         `http://localhost:3000/hr-management/emp/delete-employee/${empId}`
@@ -222,7 +231,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
   };
 
   return (
-    <div className="p-4 min-w-full ">
+    <div className="p-4 min-w-full">
       <div className="flex flex-wrap justify-between items-center mb-4">
         {/* Left Section: Title */}
         <div>
@@ -244,151 +253,152 @@ const Members = ({ onDetailsClick, darkMode }) => {
           />
 
           {/* Add Employee Button */}
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-700 transition-colors duration-200"
-          >
-            <IoMdPersonAdd className="text-lg" />
-          </button>
+          {userRole === "ADMIN" && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-700 transition-colors duration-200"
+            >
+              <IoMdPersonAdd className="text-lg" />
+            </button>
+          )}
         </div>
       </div>
 
       {showForm && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl h-[70vh] overflow-auto relative  dark:bg-gray-600">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl h-[70vh] overflow-auto relative dark:bg-gray-600">
             <button
               type="button"
-              className="absolute top-8 right-12 text-gray-600 hover:text-gray-900 dark:text-gray-200"
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
               onClick={() => setShowForm(false)}
             >
-              <SlClose size={24} />
+              <SlClose />
             </button>
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4 h-full overflow-y-auto "
-            >
-              <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
-                {editingEmployee ? "Edit Employee" : "Add Employee"}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-                {Object.keys(fieldLabels).map(
-                  (key) =>
-                    key !== "image" && (
-                      <div key={key} className="flex flex-col ">
-                        <label
-                          htmlFor={key}
-                          className="text-gray-700 font-medium text-sm mb-1 dark:text-gray-200"
-                        >
-                          {fieldLabels[key]}
-                        </label>
-                        <input
-                          type={key === "password" ? "password" : "text"}
-                          id={key}
-                          name={key}
-                          value={newEmployee[key] || ""}
-                          onChange={handleFormChange}
-                          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors duration-200 text-sm dark:text-gray-200 dark:bg-gray-600"
-                        />
-                      </div>
-                    )
-                )}
+            <h2 className="text-xl font-bold mb-4">
+              {editingEmployee ? "Edit Employee" : "Add Employee"}
+            </h2>
+            <form onSubmit={handleSubmit}>
+              {/* Render form fields based on role */}
+              {Object.keys(newEmployee).map((field) => {
+                if (
+                  userRole === "ADMIN" ||
+                  (field !== "folderName" &&
+                    field !== "password" &&
+                    field !== "is_admin")
+                ) {
+                  return (
+                    <div key={field} className="mb-4">
+                      <label
+                        className="block text-gray-700 dark:text-gray-300"
+                        htmlFor={field}
+                      >
+                        {fieldLabels[field] || field}
+                      </label>
+                      <input
+                        type={field === "password" ? "password" : "text"}
+                        name={field}
+                        id={field}
+                        value={newEmployee[field] || ""}
+                        onChange={handleFormChange}
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2"
+                        required
+                      />
+                    </div>
+                  );
+                }
+                return null;
+              })}
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
+                >
+                  {editingEmployee ? "Update" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
               </div>
-              <button
-                type="submit"
-                className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 text-sm"
-              >
-                {editingEmployee ? "Update Employee" : "Add Employee"}
-              </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* Employee Table */}
-      <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden dark:bg-gray-600 ">
+      {selectedEmployee && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl h-[70vh] overflow-auto relative dark:bg-gray-600">
+            <button
+              type="button"
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              onClick={handleCloseDetails}
+            >
+              <SlClose />
+            </button>
+            <h2 className="text-xl font-bold mb-4">Employee Details</h2>
+            {Object.entries(selectedEmployee).map(([key, value]) => (
+              <div key={key} className="mb-2">
+                <strong>{fieldLabels[key] || key}:</strong> {value || "N/A"}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <table
+        className={`w-full border-collapse ${
+          darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+        }`}
+      >
         <thead>
-          <tr className="bg-gray-200 text-gray-600 text-sm leading-normal dark:text-gray-300">
-            <th className="py-3 px-6 text-left dark:text-gray-700 ">
-              Employee ID
-            </th>
-            <th className="py-3 px-6 text-left dark:text-gray-700">Name</th>
-            <th className="py-3 px-6 text-left dark:text-gray-700">
-              Designation
-            </th>
-            <th className="py-3 px-6 text-left dark:text-gray-700">
-              Department
-            </th>
-            <th className="py-3 px-6 text-left dark:text-gray-700">Actions</th>
+          <tr>
+            <th className="border-b p-2">Actions</th>
+            {Object.keys(fieldLabels).map((field) => (
+              <th key={field} className="border-b p-2">
+                {fieldLabels[field] || field}
+              </th>
+            ))}
           </tr>
         </thead>
-        <tbody className="text-gray-600 text-sm dark:text-gray-100">
-          {filteredUsers.map((employee) => (
-            <tr
-              key={employee.empId}
-              className="border-b border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-400"
-            >
-              <td className="py-3 px-6">{employee.empId}</td>
-              <td className="py-3 px-6">{employee.name}</td>
-              <td className="py-3 px-6">{employee.designation}</td>
-              <td className="py-3 px-6">{employee.dept}</td>
-              <td className="py-3 px-6 flex gap-2">
-                <button
-                  onClick={() => handleEditEmployee(employee)}
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  <FiEdit />
-                </button>
-                <button
-                  onClick={() => handleRemoveEmployee(employee.empId)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <AiOutlineDelete />
-                </button>
-                <button
-                  onClick={() => handleShowDetails(employee)}
-                  className="text-green-500 hover:text-green-700"
-                >
-                  <TbListDetails />
-                </button>
+        <tbody>
+          {filteredUsers.map((user) => (
+            <tr key={user.empId} className="border-b">
+              <td className="p-2">
+                {userRole === "ADMIN" && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditEmployee(user)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      <FiEdit />
+                    </button>
+                    <button
+                      onClick={() => handleRemoveEmployee(user.empId)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <AiOutlineDelete />
+                    </button>
+                    <button
+                      onClick={() => handleShowDetails(user)}
+                      className="text-green-500 hover:text-green-700"
+                    >
+                      <TbListDetails />
+                    </button>
+                  </div>
+                )}
               </td>
+              {Object.keys(fieldLabels).map((field) => (
+                <td key={field} className="p-2">
+                  {user[field] || "N/A"}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
       </table>
-
-      {/* Employee Details Modal */}
-      {selectedEmployee && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-70 z-50 ">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl h-[70vh] overflow-auto relative dark:bg-gray-600">
-            {/* Close Button */}
-            <button
-              type="button"
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 dark:text-gray-300 z-50"
-              onClick={handleCloseDetails}
-            >
-              <SlClose size={24} />
-            </button>
-
-            {/* Modal Content */}
-            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-300">
-              Employee Details
-            </h2>
-            <ul className="space-y-2 dark:text-gray-300">
-              {Object.keys(selectedEmployee).map((key) => (
-                <li
-                  key={key}
-                  className="flex justify-between dark:text-gray-300"
-                >
-                  <span className="font-medium text-gray-600 dark:text-gray-300">
-                    {fieldLabels[key] || key}:
-                  </span>
-                  <span>{selectedEmployee[key]}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
