@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Members from "./Members";
 
-import { users } from "../../Pages/Employee/Data";
+// import { users } from "../../Pages/Employee/Data";
 import PayrollButton from "./PayrollButton";
 
 const Employee = () => {
@@ -23,7 +23,7 @@ const Employee = () => {
         )}
       </div>
       {/* Members Section */}
-      <div className="flex flex-col justify-start items-center gap-5 flex-1">
+      <div className="flex  flex-col justify-start items-center gap-5 flex-1">
         <div className="flex-1  w-full">
           <Members onDetailsClick={handleDetailsClick} />
         </div>

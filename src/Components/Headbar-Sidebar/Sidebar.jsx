@@ -1,5 +1,4 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaChartLine,
@@ -15,24 +14,11 @@ import {
 import { IoIosLogIn, IoIosPersonAdd } from "react-icons/io";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
+  const location = useLocation();
   const isLoggedIn = localStorage.getItem("loggedin");
 
   const links = [
-    {
-      to: "/",
-      icon: FaTachometerAlt,
-      text: "Dashboard",
-    },
-    {
-      to: "/user",
-      icon: FaTachometerAlt,
-      text: "Dashboard (USER)",
-    },
-    {
-      to: "/financial-report",
-      icon: FaChartLine,
-      text: "Financial Report (USER)",
-    },
+    { to: "/", icon: FaTachometerAlt, text: "Dashboard" },
     {
       to: "/employee",
       icon: FaUsers,
@@ -43,36 +29,18 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         darkColor: "dark:bg-gray-700 dark:text-gray-300",
       },
     },
-    {
-      to: "/lms",
-      icon: FaBookOpen,
-      text: "LMS",
-    },
-    {
-      to: "/feedback",
-      icon: FaComments,
-      text: "Feedback",
-    },
+    { to: "/lms", icon: FaBookOpen, text: "LMS" },
+    { to: "/inventory", icon: FaBoxes, text: "Inventory" },
+    { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
+    { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
+    { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
+    { to: "/feedback", icon: FaComments, text: "Feedback" },
     {
       to: "/compliance-policies",
       icon: FaFileContract,
       text: "Compliance Policies",
     },
-    {
-      to: "/company-announcements",
-      icon: FaBullhorn,
-      text: "Announcements",
-    },
-    {
-      to: "/inventory",
-      icon: FaBoxes,
-      text: "Inventory",
-    },
-    {
-      to: "/job-application",
-      icon: FaBriefcase,
-      text: "Job Application",
-    },
+    { to: "/job-application", icon: FaBriefcase, text: "Job Application" },
     {
       to: "/application-form",
       icon: FaClipboardList,
@@ -81,16 +49,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   ];
 
   const authLinks = [
-    {
-      to: "/login",
-      icon: IoIosLogIn,
-      text: "Log In",
-    },
-    {
-      to: "/signup",
-      icon: IoIosPersonAdd,
-      text: "Sign Up",
-    },
+    { to: "/login", icon: IoIosLogIn, text: "Log In" },
+    { to: "/signup", icon: IoIosPersonAdd, text: "Sign Up" },
   ];
 
   return (
@@ -105,8 +65,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <li key={index}>
               <Link
                 to={link.to}
-                onClick={toggleSidebar} // Close sidebar when a link is clicked on mobile
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={toggleSidebar}
+                className={`flex items-center p-2 rounded-lg dark:text-white ${
+                  location.pathname === link.to
+                    ? "bg-gray-100 dark:bg-gray-700"
+                    : "text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`}
               >
                 <link.icon className="mr-3" />
                 <span className="flex-1 me-3">{link.text}</span>
@@ -125,8 +89,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               <li key={index}>
                 <Link
                   to={link.to}
-                  onClick={toggleSidebar} // Close sidebar when a link is clicked on mobile
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={toggleSidebar}
+                  className={`flex items-center p-2 rounded-lg dark:text-white ${
+                    location.pathname === link.to
+                      ? "text-red-500 bg-gray-100 dark:bg-gray-700"
+                      : "text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
                 >
                   <link.icon className="mr-3" />
                   <span className="flex-1 me-3">{link.text}</span>

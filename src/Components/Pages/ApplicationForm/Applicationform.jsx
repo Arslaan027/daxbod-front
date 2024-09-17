@@ -355,12 +355,14 @@ const Form = () => {
               </div>
             )}
           </div>
-          <button
-            type="submit"
-            className="w-full py-3 px-4 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Submit
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded space-x-2"
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -114,10 +114,8 @@ const Members = ({ onDetailsClick, darkMode }) => {
       try {
         if (editingEmployee) {
           const res = await axios.put(
-
             `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.empId}`,
             newEmployee
-
           );
           setDataFromDb((prevUsers) =>
             prevUsers.map((user) =>
@@ -224,7 +222,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
   };
 
   return (
-    <div className="p-4 min-w-full">
+    <div className="p-4 min-w-full ">
       <div className="flex flex-wrap justify-between items-center mb-4">
         {/* Left Section: Title */}
         <div>
@@ -268,7 +266,6 @@ const Members = ({ onDetailsClick, darkMode }) => {
             <form
               onSubmit={handleSubmit}
               className="space-y-4 h-full overflow-y-auto "
-
             >
               <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
                 {editingEmployee ? "Edit Employee" : "Add Employee"}
@@ -311,7 +308,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
       <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden dark:bg-gray-600 ">
         <thead>
           <tr className="bg-gray-200 text-gray-600 text-sm leading-normal dark:text-gray-300">
-            <th className="py-3 px-6 text-left dark:text-gray-700">
+            <th className="py-3 px-6 text-left dark:text-gray-700 ">
               Employee ID
             </th>
             <th className="py-3 px-6 text-left dark:text-gray-700">Name</th>

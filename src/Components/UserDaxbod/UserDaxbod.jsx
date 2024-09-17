@@ -17,7 +17,7 @@ const UserDaxbod = () => {
   ]);
   const [message, setMessage] = useState("");
   const [currentTime, setCurrentTime] = useState(
-    format(new Date(), "yyyy-MM-dd HH:mm:ss")
+    format(new Date(), `yyyy-MM-dd HH:mm:ss`)
   );
 
   useEffect(() => {
