@@ -349,9 +349,57 @@ const JobApplication = () => {
                 className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
               >
+
                 Schedule
               </button>
             </div>
+
+                <option value="">Select Manager</option>
+                {managers.map((manager, index) => (
+                  <option key={index} value={manager}>
+                    {manager}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Interview Date
+              </label>
+              <input
+                type="date"
+                value={interviewDate}
+                onChange={(e) => setInterviewDate(e.target.value)}
+                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+              />
+            </div>
+            <div className="mb-4 flex gap-3">
+              <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                Interview Time
+              </label>
+              <input
+                type="time"
+                value={interviewTime}
+                onChange={(e) => setInterviewTime(e.target.value)}
+                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+              />
+            </div>
+            <button
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              onClick={handleScheduleInterview}
+            >
+              Confirm
+            </button>
+            <button
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              // onClick={handleScheduleInterview}
+            ></button>
+            <button
+              className="ml-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+              onClick={() => setScheduleModalOpen(null)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
