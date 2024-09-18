@@ -3,20 +3,21 @@ import logo from "../../../Images/newlogo.png";
 
 const Form = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    fullname: "",
     qualification: "",
-    position: "",
+    positionAppliedFor: "",
     location: "",
     resume: null,
-    dob: "",
+    dateOfBirth: "",
     yearOfPassing: "",
     phoneNumber: "",
     email: "",
-    linkedin: "",
-    experience: "No",
+    linkedInProfile: "",
+    priorExperience: "No",
     experienceDuration: "",
     currentCTC: "",
     expectedCTC: "",
+    dateApplied: "",
   });
 
   const handleChange = (e) => {
@@ -24,6 +25,13 @@ const Form = () => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: files ? files[0] : value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      resume: e.target.files[0],
     }));
   };
 
@@ -60,6 +68,7 @@ const Form = () => {
     { length: 50 },
     (_, i) => new Date().getFullYear() - i
   );
+  console.log(years);
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center mt-10 dark:bg-gray-800 dark:border-gray-800">
@@ -78,16 +87,16 @@ const Form = () => {
             {/* Full Name */}
             <div className="mb-5">
               <label
-                htmlFor="name"
+                htmlFor="fullname"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Full Name
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="fullname"
+                name="fullname"
+                value={formData.fullname}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 dark:bg-gray-600 dark:text-white focus:ring-gray-500"
                 required
@@ -135,15 +144,15 @@ const Form = () => {
             {/* Position Applied For */}
             <div className="mb-5">
               <label
-                htmlFor="position"
+                htmlFor="positionAppliedFor"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Position Applied For
               </label>
               <select
-                id="position"
-                name="position"
-                value={formData.position}
+                id="positionAppliedFor"
+                name="positionAppliedFor"
+                value={formData.positionAppliedFor}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
@@ -207,7 +216,7 @@ const Form = () => {
                 type="file"
                 id="resume"
                 name="resume"
-                // onChange={handleFileChange}
+                onChange={handleFileChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none dark:bg-gray-600 dark:text-white"
                 required
               />
@@ -257,16 +266,16 @@ const Form = () => {
             {/* Date of Birth */}
             <div className="mb-5">
               <label
-                htmlFor="dob"
+                htmlFor="dateOfBirth"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Date of Birth
               </label>
               <input
                 type="date"
-                id="dob"
-                name="dob"
-                value={formData.dob}
+                id="dateOfBirth"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
@@ -276,16 +285,16 @@ const Form = () => {
             {/* LinkedIn Profile */}
             <div className="mb-5">
               <label
-                htmlFor="linkedin"
+                htmlFor="linkedInProfile"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 LinkedIn Profile
               </label>
               <input
                 type="url"
-                id="linkedin"
-                name="linkedin"
-                value={formData.linkedin}
+                id="linkedInProfile"
+                name="linkedInProfile"
+                value={formData.linkedInProfile}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
@@ -295,25 +304,26 @@ const Form = () => {
             {/* Prior Experience */}
             <div className="mb-5">
               <label
-                htmlFor="experience"
+                htmlFor="priorExperience"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
                 Prior Experience
               </label>
               <select
-                id="experience"
-                name="experience"
-                value={formData.experience}
+                id="priorExperience"
+                name="priorExperience"
+                value={formData.priorExperience}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
               >
+                <option value="">Select Experience</option>
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
               </select>
             </div>
 
-            {formData.experience === "Yes" && (
+            {formData.priorExperience === "Yes" && (
               <div className="mb-5">
                 {/* Experience Duration */}
                 <div className="mb-5">
