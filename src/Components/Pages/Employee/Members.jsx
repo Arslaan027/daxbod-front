@@ -14,18 +14,18 @@ import AuthContext from "../../AuthContext";
 const fieldLabels = {
   empId: "Employee ID",
   name: "Name",
-  doj: "Date of Joining",
+  // doj: "Date of Joining",
   designation: "Designation",
   dept: "Department",
   reportingManager: "Reporting Manager",
   role: "Role",
-  userEmail: "Email",
-  folderName: "Folder Name",
-  password: "Password",
-  is_admin: "Is Admin",
-  phone_no: "Phone Number",
-  dob: "Date of Birth",
-  country: "Country",
+  // userEmail: "Email",
+  // folderName: "Folder Name",
+  // password: "Password",
+  // is_admin: "Is Admin",
+  // phone_no: "Phone Number",
+  // dob: "Date of Birth",
+  // country: "Country",
   employment_type: "Employment Type",
 };
 
@@ -45,9 +45,9 @@ const Members = ({ onDetailsClick, darkMode }) => {
     reportingManager: "",
     role: "",
     userEmail: "",
-    folderName: "",
+    // folderName: "",
     password: "",
-    is_admin: "No",
+    // is_admin: "No",
     phone_no: "",
     dob: "",
     country: "",
@@ -355,12 +355,12 @@ const Members = ({ onDetailsClick, darkMode }) => {
       >
         <thead>
           <tr>
-            <th className="border-b p-2">Actions</th>
             {Object.keys(fieldLabels).map((field) => (
               <th key={field} className="border-b p-2">
                 {fieldLabels[field] || field}
               </th>
             ))}
+            <th className="border-b p-2">Actions</th>
           </tr>
         </thead>
         <tbody>

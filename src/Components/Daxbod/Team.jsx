@@ -4,8 +4,10 @@ import Title from "./Title";
 import { IoMdPersonAdd } from "react-icons/io";
 import { AiTwotoneEdit } from "react-icons/ai";
 import { MdOutlineDeleteSweep } from "react-icons/md";
-import { useDropzone } from "react-dropzone";
-import { TbFaceIdError } from "react-icons/tb";
+import { MdOutlineCancel } from "react-icons/md";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import { RxUpdate } from "react-icons/rx";
+// import { useDropzone } from "react-dropzone"; // Commented out for now
 
 const Team = () => {
   const [showForm, setShowForm] = useState(false);
@@ -28,22 +30,22 @@ const Team = () => {
   const [error, setError] = useState(null);
   const [isSlideOut, setIsSlideOut] = useState(false);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "image/*",
-    onDrop: (acceptedFiles) => {
-      const file = acceptedFiles[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageUrl = reader.result;
-        if (showForm) {
-          setNewUser({ ...newUser, image: imageUrl });
-        } else if (editForm) {
-          setEditUser({ ...editUser, image: imageUrl });
-        }
-      };
-      reader.readAsDataURL(file);
-    },
-  });
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   accept: "image/*",
+  //   onDrop: (acceptedFiles) => {
+  //     const file = acceptedFiles[0];
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       const imageUrl = reader.result;
+  //       if (showForm) {
+  //         setNewUser({ ...newUser, image: imageUrl });
+  //       } else if (editForm) {
+  //         setEditUser({ ...editUser, image: imageUrl });
+  //       }
+  //     };
+  //     reader.readAsDataURL(file);
+  //   },
+  // });
 
   useEffect(() => {
     const fetchLeaders = async () => {
@@ -53,7 +55,7 @@ const Team = () => {
         );
         setLeaders(response.data);
       } catch (error) {
-        console.error("There was an error fetching the leaders:", error);
+        console.error("Error fetching leaders:", error);
         setError("Failed to fetch leaders. Please try again.");
       }
     };
@@ -64,6 +66,7 @@ const Team = () => {
   const handleAddClick = () => {
     setIsSlideOut(true);
     setShowForm(true);
+    setEditForm(false);
   };
 
   const handleEditClick = (leader) => {
@@ -74,18 +77,27 @@ const Team = () => {
       role: leader.role,
       image: leader.image,
     });
+    setIsSlideOut(true);
+    setShowForm(true);
     setEditForm(true);
   };
 
   const handleCloseForm = () => {
     setIsSlideOut(false);
-    setTimeout(() => setShowForm(false), 300); // Delay hiding the form to complete slide-out animation
-    setError(null);
+    setTimeout(() => {
+      setShowForm(false);
+      setNewUser({ name: "", country: "", role: "", image: "" }); // Reset new user state
+      setError(null);
+    }, 300);
   };
 
   const handleCloseEditForm = () => {
-    setEditForm(false);
-    setError(null);
+    setIsSlideOut(false);
+    setTimeout(() => {
+      setEditForm(false);
+      setEditUser({ id: "", name: "", country: "", role: "", image: "" }); // Reset edit user state
+      setError(null);
+    }, 300);
   };
 
   const handleChange = (e) => {
@@ -100,16 +112,16 @@ const Team = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:3000/hr-management/leader/add",
         newUser
       );
       setLeaders([...leaders, newUser]);
-      setLoading(false);
       handleCloseForm();
     } catch (error) {
-      console.error("There was an error adding the leader:", error);
+      console.error("Error adding leader:", error);
       setError("Failed to add leader. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -118,18 +130,18 @@ const Team = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:3000/hr-management/leader/edit/${editUser.id}`,
         editUser
       );
       setLeaders(
         leaders.map((leader) => (leader.id === editUser.id ? editUser : leader))
       );
-      setLoading(false);
       handleCloseEditForm();
     } catch (error) {
-      console.error("There was an error updating the leader:", error);
+      console.error("Error updating leader:", error);
       setError("Failed to update leader. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -142,10 +154,7 @@ const Team = () => {
       );
       setLeaders(leaders.filter((leader) => leader.id !== id));
     } catch (error) {
-      console.error(
-        "There was an error deleting the leader:",
-        error.response || error.message
-      );
+      console.error("Error deleting leader:", error);
       setError("Failed to delete leader. Please try again.");
     } finally {
       setLoading(false);
@@ -155,7 +164,7 @@ const Team = () => {
   return (
     <div className="bg-white p-3 rounded-2xl dark:bg-gray-900 dark:text-gray-300 flex-1 flex gap-5 flex-col">
       <div className="flex justify-between items-center ml-2">
-        <Title>Our dynamic Leaders</Title>
+        <Title>Our Dynamic Leaders</Title>
         <button
           className="mr-2 text-gray-500 py-2 px-4 rounded-full flex items-center justify-center"
           onClick={handleAddClick}
@@ -184,12 +193,12 @@ const Team = () => {
               </div>
             </div>
             <span className="p-3 rounded-full text-xs text-gray-700 font-semibold dark:bg-gray-500 dark:text-gray-300 flex gap-3">
-              <button
+              {/* <button
                 className="text-2xl text-gray-500 cursor-pointer"
                 onClick={() => handleEditClick(leader)}
               >
                 <AiTwotoneEdit />
-              </button>
+              </button> */}
               <button
                 className="text-2xl text-gray-500 cursor-pointer"
                 onClick={() => handleDelete(leader.id)}
@@ -201,181 +210,113 @@ const Team = () => {
         ))
       ) : (
         <p className="text-gray-500 dark:text-gray-400 text-2xl flex items-center justify-center h-full gap-3">
-          <TbFaceIdError className="text-4xl" /> <i>No leaders found.</i>
+          <i>No leaders found.</i>
         </p>
       )}
 
-      {showForm && (
+      {showForm && (editForm || !editForm) && (
         <div
           className={`fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-10 transition-transform duration-300 ${
             isSlideOut ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <div className="bg-gray-100 p-6 rounded-lg shadow-2xl dark:bg-gray-800 w-full max-w-md">
-            <h2 className="w-full text-xl font-bold mb-4">Add New Leader</h2>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="name" className="block mb-2">
-                Name:
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={newUser.name}
-                onChange={handleChange}
-                className="border w-full px-3 py-2 mb-4 rounded-md"
-                required
-              />
-              <label htmlFor="country" className="block mb-2">
-                Country:
-              </label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                value={newUser.country}
-                onChange={handleChange}
-                className="border w-full px-3 py-2 mb-4 rounded-md"
-                required
-              />
-              <label htmlFor="role" className="block mb-2">
-                Role:
-              </label>
-              <input
-                type="text"
-                id="role"
-                name="role"
-                value={newUser.role}
-                onChange={handleChange}
-                className="border w-full px-3 py-2 mb-4 rounded-md"
-                required
-              />
-              <label htmlFor="image" className="block mb-2">
-                Image:
-              </label>
-              <div
-                {...getRootProps({
-                  className:
-                    "dropzone border p-4 rounded-md cursor-pointer mb-4",
-                })}
-              >
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <p>Drag 'n' drop an image here, or click to select one</p>
-                )}
-              </div>
-              {newUser.image && (
-                <img
-                  src={newUser.image}
-                  alt="Selected"
-                  className="w-24 h-24 object-cover rounded-md mb-4"
+          <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-md flex flex-col items-center w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4">
+              {editForm ? "Edit Leader" : "Add Leader"}
+            </h2>
+            <form
+              onSubmit={editForm ? handleEditSubmit : handleSubmit}
+              className="w-full"
+            >
+              <div className="mb-4">
+                <input
+                  type="text"
+                  name="name"
+                  value={editForm ? editUser.name : newUser.name}
+                  onChange={editForm ? handleEditChange : handleChange}
+                  placeholder="Name"
+                  className="p-2 w-full border rounded-md dark:bg-gray-700 dark:text-gray-200"
+                  required
                 />
-              )}
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                disabled={loading}
-              >
-                {loading ? "Adding..." : "Add Leader"}
-              </button>
-              <button
-                type="button"
-                onClick={handleCloseForm}
-                className="ml-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-              >
-                Cancel
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {editForm && (
-        <div
-          className={`fixed inset-0 ml-52 flex items-center justify-center bg-gray-800 bg-opacity-10 transition-transform duration-300 ${
-            isSlideOut ? "translate-x-0" : "translate-x-100"
-          }`}
-        >
-          <div className="bg-gray-100 p-6 rounded-lg shadow-2xl dark:bg-gray-800 w-full max-w-md">
-            <h2 className="w-full text-xl font-bold mb-4">Edit Leader</h2>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            <form onSubmit={handleEditSubmit}>
-              <label htmlFor="name" className="block mb-2">
-                Name:
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={editUser.name}
-                onChange={handleEditChange}
-                className="border w-full px-3 py-2 mb-4 rounded-md"
-                required
-              />
-              <label htmlFor="country" className="block mb-2">
-                Country:
-              </label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                value={editUser.country}
-                onChange={handleEditChange}
-                className="border w-full px-3 py-2 mb-4 rounded-md"
-                required
-              />
-              <label htmlFor="role" className="block mb-2">
-                Role:
-              </label>
-              <input
-                type="text"
-                id="role"
-                name="role"
-                value={editUser.role}
-                onChange={handleEditChange}
-                className="border w-full px-3 py-2 mb-4 rounded-md"
-                required
-              />
-              <label htmlFor="image" className="block mb-2">
-                Image:
-              </label>
-              <div
-                {...getRootProps({
-                  className:
-                    "dropzone border p-4 rounded-md cursor-pointer mb-4",
-                })}
-              >
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <p>Drag 'n' drop an image here, or click to select one</p>
-                )}
               </div>
-              {editUser.image && (
-                <img
-                  src={editUser.image}
-                  alt="Selected"
-                  className="w-24 h-24 object-cover rounded-md mb-4"
+              <div className="mb-4">
+                <input
+                  type="text"
+                  name="country"
+                  value={editForm ? editUser.country : newUser.country}
+                  onChange={editForm ? handleEditChange : handleChange}
+                  placeholder="Country"
+                  className="p-2 w-full border rounded-md dark:bg-gray-700 dark:text-gray-200"
+                  required
                 />
-              )}
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                disabled={loading}
-              >
-                {loading ? "Updating..." : "Update Leader"}
-              </button>
-              <button
-                type="button"
-                onClick={handleCloseEditForm}
-                className="ml-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-              >
-                Cancel
-              </button>
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  name="role"
+                  value={editForm ? editUser.role : newUser.role}
+                  onChange={editForm ? handleEditChange : handleChange}
+                  placeholder="Role"
+                  className="p-2 w-full border rounded-md dark:bg-gray-700 dark:text-gray-200"
+                  required
+                />
+              </div>
+              {/* <div className="mb-4">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        if (editForm) {
+                          setEditUser({ ...editUser, image: reader.result });
+                        } else {
+                          setNewUser({ ...newUser, image: reader.result });
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                    className="p-2 w-full border rounded-md dark:bg-gray-700 dark:text-gray-200"
+                  />
+                  <img
+                    src={editForm ? editUser.image : newUser.image}
+                    alt="Preview"
+                    className="w-24 h-24 mt-2 rounded-full"
+                  />
+                </div> */}
+              {error && <p className="text-red-500">{error}</p>}
+              <div className="flex justify-end gap-2">
+                <button
+                  type="submit"
+                  className="bg-gray-200 text-gray-800 dark:text-gray-200 dark:bg-gray-500 p-2 rounded-md text-md flex items-center gap-1 transition-colors duration-200"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span>Processing...</span>
+                    </>
+                  ) : editForm ? (
+                    <>
+                      <RxUpdate />
+                      <span>Update</span>
+                    </>
+                  ) : (
+                    <>
+                      <IoMdAddCircleOutline />
+                      <span>Add</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={editForm ? handleCloseEditForm : handleCloseForm}
+                  className="bg-gray-200 text-gray-800 dark:text-gray-200  dark:bg-gray-500 p-2 rounded-md text-md flex items-center gap-1 transition-colors duration-200"
+                >
+                  <MdOutlineCancel />
+                  <span>Cancel</span>
+                </button>
+              </div>
             </form>
           </div>
         </div>
