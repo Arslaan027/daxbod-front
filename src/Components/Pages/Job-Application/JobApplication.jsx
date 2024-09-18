@@ -1,32 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Title from "../../Daxbod/Title";
 
-const initialApplications = [
-  {
-    id: 1,
-    name: "John Doe",
-    position: "Software Engineer",
-    location: "Aligarh",
-    dateApplied: "2024-08-01",
-    status: "Under Review",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    position: "Frontend Developer",
-    location: "Aligarh",
-    dateApplied: "2024-07-20",
-    status: "Interview Scheduled",
-  },
-  {
-    id: 3,
-    name: "Michael Johnson",
-    position: "Backend Developer",
-    location: "Aligarh",
-    dateApplied: "2024-07-15",
-    status: "Rejected",
-  },
-];
+// Mock data and other constants
+const initialApplications = []; // Initial empty array, we'll populate it from the backend
 
 const statusSteps = [
   { name: "Applied", color: "bg-gray-500" },
@@ -34,7 +10,7 @@ const statusSteps = [
   { name: "Interview Scheduled", color: "bg-gray-500" },
   { name: "Interviewed", color: "bg-gray-500" },
   { name: "Selected", color: "bg-gray-500" },
-  { name: "Rejected", color: "bg-gray-500 text-red-500" }, // Separate classes properly
+  { name: "Rejected", color: "bg-gray-500 text-red-500" },
 ];
 
 const managers = [
@@ -56,16 +32,99 @@ const JobApplication = () => {
   const [interviewFeedback, setInterviewFeedback] = useState("");
   const [finalStatus, setFinalStatus] = useState("");
   const [selectedApplication, setSelectedApplication] = useState(null);
+  const [rejectedModalOpen, setRejectedModalOpen] = useState(null);
 
-  const handleStatusChange = (id, newStatus) => {
-    setApplications((prevApps) =>
-      prevApps.map((app) =>
-        app.id === id ? { ...app, status: newStatus } : app
-      )
-    );
-    setModalOpen(null);
-    setScheduleModalOpen(null);
-    setInterviewModalOpen(null); // Close the interview modal if open
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/hr-management/applicants/get-app",
+          {
+            method: "GET",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok.");
+        }
+        const data = await response.json();
+        setApplications(data);
+      } catch (error) {
+        console.error("Failed to fetch applications:", error);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
+  const formatDate = (dateString) => {
+    if (!dateString || dateString === "0000-00-00") return "N/A"; // Handle empty, null, or invalid dates
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid Date"; // Handle invalid dates
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const updateApplicationStatus = async (id, newStatus) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/hr-management/applicants/update-status/${id}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to update status: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
+  };
+  const deleteApplication = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/hr-management/applicants/delete-app/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete application.");
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+
+      // Remove the deleted application from the state
+      setApplications((prevApps) => prevApps.filter((app) => app.id !== id));
+    } catch (error) {
+      console.error("Failed to delete application:", error);
+    }
+  };
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateApplicationStatus(id, newStatus);
+
+      setApplications((prevApps) =>
+        prevApps.map((app) =>
+          app.id === id ? { ...app, status: newStatus } : app
+        )
+      );
+    } catch (error) {
+      console.error("Failed to change status:", error);
+    }
   };
 
   const getActiveStep = (status) => {
@@ -86,6 +145,7 @@ const JobApplication = () => {
     setSelectedManager("");
     setInterviewDate("");
     setInterviewTime("");
+    setScheduleModalOpen(null);
   };
 
   const openDetailsModal = (app) => {
@@ -98,6 +158,18 @@ const JobApplication = () => {
     setInterviewModalOpen(true);
   };
 
+  const openRejectedModal = (app) => {
+    setSelectedApplication(app);
+    setRejectedModalOpen(true);
+  };
+
+  const handleFirstCallResponse = (id, confirmed) => {
+    if (confirmed) {
+      handleStatusChange(id, "First Call");
+    }
+    setModalOpen(null);
+  };
+
   const handleInterviewCompletion = () => {
     handleStatusChange(selectedApplication.id, finalStatus);
     setInterviewModalOpen(null);
@@ -106,6 +178,15 @@ const JobApplication = () => {
     setInterviewTime("");
     setInterviewFeedback("");
     setFinalStatus("");
+  };
+
+  const handleRejectedAction = async (action) => {
+    if (action === "Hold") {
+      await handleStatusChange(selectedApplication.id, "On Hold");
+    } else if (action === "Remove") {
+      await deleteApplication(selectedApplication.id);
+    }
+    setRejectedModalOpen(null);
   };
 
   return (
@@ -119,16 +200,16 @@ const JobApplication = () => {
           >
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                {app.name}
+                {app.fullname}
               </h2>
               <p className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                {app.position}
+                {app.positionAppliedFor}
               </p>
               <p className="text-gray-800 dark:text-gray-300 mb-2">
                 {app.location}
               </p>
               <p className="text-gray-700 dark:text-gray-400 mb-4">
-                Date Applied: {app.dateApplied}
+                Date Applied: {formatDate(app.dateApplied || "0000-00-00")}
               </p>
 
               <button
@@ -159,6 +240,8 @@ const JobApplication = () => {
                         openScheduleModal(app.id);
                       } else if (step.name === "Interviewed") {
                         openInterviewModal(app);
+                      } else if (step.name === "Rejected") {
+                        openRejectedModal(app);
                       } else {
                         handleStatusChange(app.id, step.name);
                       }
@@ -188,54 +271,89 @@ const JobApplication = () => {
       </div>
 
       {/* Modal for First Call */}
-      {modalOpen !== null && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 dark:bg-gray-400 bg-opacity-50 dark:bg-opacity-50 z-50">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              First Call Options
-            </h2>
-            <ul>
-              <li
-                className="rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                onClick={() =>
-                  handleStatusChange(modalOpen, "Interview Scheduled")
-                }
+      {modalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setModalOpen(null)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">First Call</h2>
+            <p>Would you like to schedule the first call?</p>
+            <div className="flex gap-4 mt-4">
+              <button
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleFirstCallResponse(modalOpen, true)} // "Yes" clicked
               >
-                Proceed to Interview Scheduled
-              </li>
-              <li
-                className="rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-500 dark:text-white"
-                onClick={() => handleStatusChange(modalOpen, "Rejected")}
+                Yes
+              </button>
+              <button
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleFirstCallResponse(modalOpen, false)} // "No" clicked
               >
-                Reject Application
-              </li>
-            </ul>
-            <button
-              className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-              onClick={() => setModalOpen(null)}
-            >
-              Close
-            </button>
+                No
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Modal for Scheduling Interview */}
-      {scheduleModalOpen !== null && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 dark:bg-gray-500 dark:bg-opacity-50 bg-opacity-50 z-50">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              Schedule Interview
-            </h2>
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Manager
-              </label>
-              <select
-                value={selectedManager}
-                onChange={(e) => setSelectedManager(e.target.value)}
-                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+      {scheduleModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setScheduleModalOpen(null)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Schedule Interview</h2>
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block mb-2">Manager</label>
+                <select
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={selectedManager}
+                  onChange={(e) => setSelectedManager(e.target.value)}
+                >
+                  <option value="">Select Manager</option>
+                  {managers.map((manager) => (
+                    <option key={manager} value={manager}>
+                      {manager}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block mb-2">Date</label>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2">Time</label>
+                <input
+                  type="time"
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={interviewTime}
+                  onChange={(e) => setInterviewTime(e.target.value)}
+                />
+              </div>
+              <button
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={handleScheduleInterview}
               >
+
+                Schedule
+              </button>
+            </div>
+
                 <option value="">Select Manager</option>
                 {managers.map((manager, index) => (
                   <option key={index} value={manager}>
@@ -287,64 +405,78 @@ const JobApplication = () => {
       )}
 
       {/* Modal for Interview Feedback */}
-      {interviewModalOpen !== null && selectedApplication && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 dark:bg-gray-500 dark:bg-opacity-50 bg-opacity-50 z-50">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              Interview Feedback
-            </h2>
-            <label className="block text-gray-700 dark:text-gray-300 mb-2">
-              Feedback
-            </label>
-            <textarea
-              value={interviewFeedback}
-              onChange={(e) => setInterviewFeedback(e.target.value)}
-              className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-              rows="4"
-            />
-            <div className="flex gap-3 mt-4">
+      {interviewModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setInterviewModalOpen(null)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Interview Feedback</h2>
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block mb-2">Interview Feedback</label>
+                <textarea
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={interviewFeedback}
+                  onChange={(e) => setInterviewFeedback(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2">Final Status</label>
+                <select
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={finalStatus}
+                  onChange={(e) => setFinalStatus(e.target.value)}
+                >
+                  <option value="">Select Status</option>
+                  {statusSteps.slice(4).map((status) => (
+                    <option key={status.name} value={status.name}>
+                      {status.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <button
-                className="px-4 py-2 bg-gray-500 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-600 dark:hover:bg-gray-600"
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleInterviewCompletion}
               >
-                Confirm
-              </button>
-              <button
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-                onClick={() => setInterviewModalOpen(null)}
-              >
-                Close
+                Save Feedback
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal for Application Details */}
-      {detailsModalOpen && selectedApplication && (
+      {/* Modal for Rejected Status */}
+      {rejectedModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 dark:bg-gray-500 bg-opacity-50 dark:bg-opacity-50 z-50">
           <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-80">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              Application Details
+              Application Rejected
             </h2>
-            <p className="mb-4 text-gray-900 dark:text-gray-100">
-              <strong>Name:</strong> {selectedApplication.name}
+            <p className="mb-4 text-gray-700 dark:text-gray-300">
+              What would you like to do with this application?
             </p>
-            <p className="mb-4 text-gray-900 dark:text-gray-100">
-              <strong>Position:</strong> {selectedApplication.position}
-            </p>
-            <p className="mb-4 text-gray-900 dark:text-gray-100">
-              <strong>Location:</strong> {selectedApplication.location}
-            </p>
-            <p className="mb-4 text-gray-900 dark:text-gray-100">
-              <strong>Date Applied:</strong> {selectedApplication.dateApplied}
-            </p>
-            <p className="mb-4 text-gray-900 dark:text-gray-100">
-              <strong>Status:</strong> {selectedApplication.status}
-            </p>
+            <div className="flex gap-2">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                onClick={() => handleRejectedAction("Hold")}
+              >
+                Hold
+              </button>
+              <button
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleRejectedAction("Remove")}
+              >
+                Remove
+              </button>
+            </div>
             <button
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-              onClick={() => setDetailsModalOpen(false)}
+              className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+              onClick={() => setRejectedModalOpen(null)}
             >
               Close
             </button>
