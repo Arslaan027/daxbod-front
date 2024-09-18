@@ -255,7 +255,7 @@ const JobApplication = () => {
                 className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-4 flex gap-3">
               <label className="block text-gray-700 dark:text-gray-300 mb-2">
                 Interview Time
               </label>
@@ -267,11 +267,15 @@ const JobApplication = () => {
               />
             </div>
             <button
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
               onClick={handleScheduleInterview}
             >
               Confirm
             </button>
+            <button
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              // onClick={handleScheduleInterview}
+            ></button>
             <button
               className="ml-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
               onClick={() => setScheduleModalOpen(null)}

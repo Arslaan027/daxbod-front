@@ -22,6 +22,7 @@ import Financial from "./Components/UserFinancialReport/Financial";
 import FeedbackSupport from "./Components/UserExtraPages/FeedbackSupport";
 import CompliancePolicies from "./Components/UserExtraPages/CompliancePolicies";
 import CompanyAnnouncements from "./Components/UserExtraPages/CompanyAnnouncements";
+import Userinfo from "./Components/userData/Userinfo";
 
 const salaryData = [
   {
@@ -208,6 +209,7 @@ function App() {
             <Route path="/job-application" element={<JobApplication />} />
             <Route path="/application-form" element={<Form />} />
             <Route path="/feedback" element={<FeedbackSupport />} />
+            <Route path="/my-info" element={<Userinfo />} />
             <Route
               path="/compliance-policies"
               element={<CompliancePolicies />}

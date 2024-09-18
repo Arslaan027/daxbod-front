@@ -12,6 +12,7 @@ import {
   FaClipboardList,
 } from "react-icons/fa";
 import { IoIosLogIn, IoIosPersonAdd } from "react-icons/io";
+import { BiDetail } from "react-icons/bi";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const location = useLocation();
@@ -21,6 +22,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   // Define links based on roles
   const hrLinks = [
     { to: "/", icon: FaTachometerAlt, text: "Dashboard" },
+    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+
     {
       to: "/employee",
       icon: FaUsers,
@@ -33,11 +36,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     },
     { to: "/lms", icon: FaBookOpen, text: "LMS" },
     { to: "/inventory", icon: FaBoxes, text: "Inventory" },
-    { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
   ];
 
   const userLinks = [
     { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
+    { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
+    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
     { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
     { to: "/feedback", icon: FaComments, text: "Feedback" },
     {
@@ -70,6 +74,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       icon: FaFileContract,
       text: "Compliance Policies",
     },
+    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+
     { to: "/job-application", icon: FaBriefcase, text: "Job Application" },
     {
       to: "/application-form",
