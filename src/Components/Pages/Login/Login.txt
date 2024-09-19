@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../../Images/newlogo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { json, Link, useNavigate } from "react-router-dom";
 import { FaSun, FaMoon } from "react-icons/fa";
-import axios from "axios";
+import axios from "axios"; // Add axios for API calls
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,30 +35,20 @@ const Login = () => {
           password,
         }
       );
+      console.log(response);
 
       if (
         response.status === 200 &&
         response.data.message === "Login successful"
       ) {
-        const { token, role, empId, name } = response.data;
-
-        // Save token and role in localStorage (or sessionStorage if preferred)
+        // Store the token in localStorage
         localStorage.setItem("loggedin", "true");
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role); // Save the role (ADMIN, HR, EMP) for further use
-        localStorage.setItem("empId", empId);
-        localStorage.setItem("name", name);
+        localStorage.setItem("token", response.data.token);
 
-        // Redirect based on role
-        if (role === "ADMIN") {
-          navigate("/");
-        } else if (role === "HR") {
-          navigate("/company-announcements");
-        } else {
-          navigate("/user");
-        }
+        // Navigate to the home page
+        navigate("/"); // Ensure this redirects to the home page
       } else {
-        alert("Invalid credentials");
+        alert("Wrong Credentials or error occurred during login");
       }
     } catch (error) {
       alert("Wrong Credentials or error occurred during login.");
@@ -72,6 +62,7 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800 p-4 sm:p-6 md:p-8">
       <div className="flex flex-col md:flex-row w-full max-w-4xl bg-gray-100 dark:bg-gray-800">
+        {/* Left Section: Logo and Text */}
         <div className="bg-gray-700 dark:bg-gray-900 p-6 md:p-8 rounded-t-lg md:rounded-l-lg shadow-lg flex flex-col items-center justify-center md:w-1/2 mb-4 md:mb-0">
           <img
             src={logo}
@@ -85,6 +76,8 @@ const Login = () => {
             Creating Sustainable Tomorrows
           </div>
         </div>
+
+        {/* Right Section: Login Form */}
         <div className="relative bg-white dark:bg-gray-900 p-6 md:p-8 rounded-b-lg md:rounded-r-lg shadow-lg md:w-1/2">
           <div className="absolute top-4 right-4">
             <button
@@ -163,6 +156,12 @@ const Login = () => {
               >
                 Forgot Password?
               </Link>
+              {/* <Link
+                to="/signup"
+                className="text-gray-600 dark:text-gray-400 font-bold hover:underline"
+              >
+                Sign Up
+              </Link> */}
             </div>
             <button
               type="submit"
