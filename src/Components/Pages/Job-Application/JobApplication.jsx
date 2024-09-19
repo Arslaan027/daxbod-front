@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Title from "../../Daxbod/Title";
 
 // Mock data and other constants
-const initialApplications = []; // Initial empty array, we'll populate it from the backend
+const initialApplications = [];
 
 const statusSteps = [
   { name: "Applied", color: "bg-gray-500" },
@@ -57,9 +57,9 @@ const JobApplication = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    if (!dateString || dateString === "0000-00-00") return "N/A"; // Handle empty, null, or invalid dates
+    if (!dateString || dateString === "0000-00-00") return "N/A";
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date"; // Handle invalid dates
+    if (isNaN(date.getTime())) return "Invalid Date";
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -106,7 +106,6 @@ const JobApplication = () => {
       const data = await response.json();
       console.log(data.message);
 
-      // Remove the deleted application from the state
       setApplications((prevApps) => prevApps.filter((app) => app.id !== id));
     } catch (error) {
       console.error("Failed to delete application:", error);
@@ -284,13 +283,13 @@ const JobApplication = () => {
             <p>Would you like to schedule the first call?</p>
             <div className="flex gap-4 mt-4">
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => handleFirstCallResponse(modalOpen, true)} // "Yes" clicked
               >
                 Yes
               </button>
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-red-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => handleFirstCallResponse(modalOpen, false)} // "No" clicked
               >
                 No
@@ -346,12 +345,48 @@ const JobApplication = () => {
                 />
               </div>
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
               >
-                Schedule
+                Schedule Interview
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {detailsModalOpen && selectedApplication && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setDetailsModalOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Application Details</h2>
+            <p>
+              <strong>Name:</strong> {selectedApplication.fullname}
+            </p>
+            <p>
+              <strong>Position:</strong>{" "}
+              {selectedApplication.positionAppliedFor}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedApplication.location}
+            </p>
+            <p>
+              <strong>Date Applied:</strong>{" "}
+              {formatDate(selectedApplication.dateApplied)}
+            </p>
+            {/* Add more details as needed */}
+            <button
+              className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+              onClick={() => setDetailsModalOpen(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
@@ -392,7 +427,7 @@ const JobApplication = () => {
                 </select>
               </div>
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-yellow-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleInterviewCompletion}
               >
                 Save Feedback
@@ -414,13 +449,13 @@ const JobApplication = () => {
             </p>
             <div className="flex gap-2">
               <button
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-red-500 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => handleRejectedAction("Hold")}
               >
                 Hold
               </button>
               <button
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-yellow-500 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => handleRejectedAction("Remove")}
               >
                 Remove

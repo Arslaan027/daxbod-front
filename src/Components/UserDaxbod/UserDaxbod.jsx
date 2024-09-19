@@ -3,24 +3,39 @@ import { format } from "date-fns";
 import { FaRegClock } from "react-icons/fa";
 
 const UserDaxbod = () => {
-  const [attendance, setAttendance] = useState([
-    { date: "2024-09-12 08:30:00", day: "Thursday" },
-    { date: "2024-09-11 09:00:00", day: "Wednesday" },
-    { date: "2024-09-10 08:45:00", day: "Tuesday" },
-    { date: "2024-09-09 08:55:00", day: "Monday" },
-    { date: "2024-09-08 08:50:00", day: "Sunday" },
-    { date: "2024-09-07 09:10:00", day: "Saturday" },
-    { date: "2024-09-06 09:00:00", day: "Friday" },
-    { date: "2024-09-05 08:40:00", day: "Thursday" },
-    { date: "2024-09-04 08:30:00", day: "Wednesday" },
-    { date: "2024-09-03 08:55:00", day: "Tuesday" },
-  ]);
+  const [attendance, setAttendance] = useState([]);
   const [message, setMessage] = useState("");
   const [currentTime, setCurrentTime] = useState(
     format(new Date(), `yyyy-MM-dd HH:mm:ss`)
   );
 
   useEffect(() => {
+    const fetchAttendence = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/hr-management/punch/get-punch/${empId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setAttendance(
+            data.map((entry) => ({
+              date: entry.timestamp,
+              day: new Date(entry.timestamp).toLocaleDateString("en-US", {
+                weekday: "long",
+              }),
+            }))
+          );
+        } else {
+          const result = await response.json();
+          setMessage(result.message || "Failed to load attendence data.");
+        }
+      } catch (error) {
+        setMessage(`Error: ${error.message}`);
+      }
+    };
+
+    fetchAttendence();
+
     const interval = setInterval(() => {
       setCurrentTime(format(new Date(), "yyyy-MM-dd HH:mm:ss"));
     }, 1000);
@@ -34,11 +49,18 @@ const UserDaxbod = () => {
       const formattedDate = format(now, "yyyy-MM-dd HH:mm:ss");
       const dayOfWeek = format(now, "EEEE");
 
-      const response = await fetch("/api/punch-in", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ timestamp: formattedDate }),
-      });
+      const response = await fetch(
+        "http://localhost:3000/hr-management/punch/punch-In",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            empId: 22,
+            name: "Mia Clark",
+            timestamp: formattedDate,
+          }),
+        }
+      );
 
       if (response.ok) {
         setAttendance((prev) => [
@@ -47,7 +69,8 @@ const UserDaxbod = () => {
         ]);
         setMessage("Punch-in successful!");
       } else {
-        setMessage("Punch-in failed.");
+        const result = await response.json();
+        setMessage(result.message || "Punch-in failed.");
       }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
