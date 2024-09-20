@@ -1,0 +1,258 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const SelectedForm = () => {
+  const [formData, setFormData] = useState({
+    empId: "",
+    name: "",
+    doj: "",
+    designation: "",
+    dept: "",
+    reportingManager: "",
+    role: "",
+    userEmail: "",
+    password: "",
+    phone_no: "",
+    dob: "",
+    country: "",
+    employment_type: "",
+    imageFile: null,
+  });
+
+  const navigate = useNavigate();
+
+  const backButton = () => {
+    navigate(-1);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, imageFile: e.target.files[0] });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Retrieve the role and token from local storage
+    const userRole = localStorage.getItem("role");
+    const token = localStorage.getItem("token");
+
+    // Check if user has permission to add an employee
+    if (userRole !== "HR" && userRole !== "ADMIN") {
+      alert("You do not have permission to add an employee.");
+      return;
+    }
+
+    const { imageFile, ...data } = formData;
+
+    const formDataToSend = new FormData();
+    Object.keys(data).forEach((key) => {
+      formDataToSend.append(key, data[key]);
+    });
+    if (imageFile) {
+      formDataToSend.append("image", imageFile);
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/hr-management/emp/add-employee",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // Include token in headers
+          },
+        }
+      );
+      console.log(response.data);
+      alert("Employee added successfully!");
+      navigate("/employee");
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      alert("Error adding employee. Please try again.");
+    }
+  };
+
+  return (
+    <div className="p-4 md:ml-64 md:mt-20">
+      <h1 className="font-bold text-gray-700 text-center mb-10 text-2xl dark:text-gray-400">
+        Add Employee
+      </h1>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex space-x-8">
+          {/* Left Section */}
+          <div className="w-1/2 space-y-4">
+            <div>
+              <label>Employee ID</label>
+              <input
+                type="text"
+                name="empId"
+                value={formData.empId}
+                onChange={handleChange}
+                className="border p-2 w-full"
+                required
+              />
+            </div>
+            <div>
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Date of Joining</label>
+              <input
+                type="date"
+                name="doj"
+                value={formData.doj}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Designation</label>
+              <input
+                type="text"
+                name="designation"
+                value={formData.designation}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Department</label>
+              <input
+                type="text"
+                name="dept"
+                value={formData.dept}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Reporting Manager</label>
+              <input
+                type="text"
+                name="reportingManager"
+                value={formData.reportingManager}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Employment Type</label>
+              <input
+                type="text"
+                name="employment_type"
+                value={formData.employment_type}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+          </div>
+
+          {/* Right Section */}
+          <div className="w-1/2 space-y-4">
+            <div>
+              <label>Role</label>
+              <input
+                type="text"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Email</label>
+              <input
+                type="email"
+                name="userEmail"
+                value={formData.userEmail}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Phone Number</label>
+              <input
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Date of Birth</label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Country</label>
+              <input
+                type="text"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className="border p-2 w-full"
+              />
+            </div>
+            <div>
+              <label>Profile Image</label>
+              <input
+                type="file"
+                name="imageFile"
+                onChange={handleFileChange}
+                className="border p-2 w-full"
+                accept="image/*"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-3 py-10">
+          <button
+            type="button"
+            className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white p-2 rounded w-auto"
+            onClick={backButton}
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white p-2 rounded w-auto"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default SelectedForm;
