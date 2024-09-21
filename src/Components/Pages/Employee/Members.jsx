@@ -14,18 +14,18 @@ import AuthContext from "../../AuthContext";
 const fieldLabels = {
   empId: "Employee ID",
   name: "Name",
-  doj: "Date of Joining",
+  // doj: "Date of Joining",
   designation: "Designation",
   dept: "Department",
   reportingManager: "Reporting Manager",
   role: "Role",
-  userEmail: "Email",
-  folderName: "Folder Name",
-  password: "Password",
-  is_admin: "Is Admin",
-  phone_no: "Phone Number",
-  dob: "Date of Birth",
-  country: "Country",
+  // userEmail: "Email",
+  // folderName: "Folder Name",
+  // password: "Password",
+  // is_admin: "Is Admin",
+  // phone_no: "Phone Number",
+  // dob: "Date of Birth",
+  // country: "Country",
   employment_type: "Employment Type",
 };
 
@@ -45,9 +45,9 @@ const Members = ({ onDetailsClick, darkMode }) => {
     reportingManager: "",
     role: "",
     userEmail: "",
-    folderName: "",
+    // folderName: "",
     password: "",
-    is_admin: "No",
+    // is_admin: "No",
     phone_no: "",
     dob: "",
     country: "",
@@ -63,7 +63,14 @@ const Members = ({ onDetailsClick, darkMode }) => {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/hr-management/emp/all-employee"
+          "http://localhost:3000/hr-management/emp/all-employee",
+          {
+            headers: {
+              Authorization: `Bearer ${
+                user?.token || localStorage.getItem("token")
+              }`,
+            },
+          }
         );
         if (Array.isArray(res.data)) {
           setDataFromDb(res.data);
@@ -79,7 +86,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
     };
 
     fetchData();
-  }, []);
+  }, [user]);
 
   // Search Filter
   useEffect(() => {
@@ -119,7 +126,15 @@ const Members = ({ onDetailsClick, darkMode }) => {
         if (editingEmployee) {
           const res = await axios.put(
             `http://localhost:3000/hr-management/emp/update-employee/${newEmployee.empId}`,
-            newEmployee
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${
+                  user?.token || localStorage.getItem("token")
+                }`,
+              },
+            }
           );
           setDataFromDb((prevUsers) =>
             prevUsers.map((user) =>
@@ -131,7 +146,14 @@ const Members = ({ onDetailsClick, darkMode }) => {
           const res = await axios.post(
             "http://localhost:3000/hr-management/emp/add-employee",
             formData,
-            { headers: { "Content-Type": "multipart/form-data" } }
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${
+                  user?.token || localStorage.getItem("token")
+                }`,
+              },
+            }
           );
           setDataFromDb((prevUsers) => [...prevUsers, res.data]);
         }
@@ -150,9 +172,7 @@ const Members = ({ onDetailsClick, darkMode }) => {
         reportingManager: "",
         role: "",
         userEmail: "",
-        folderName: "",
         password: "",
-        is_admin: "No",
         phone_no: "",
         dob: "",
         country: "",
@@ -191,7 +211,14 @@ const Members = ({ onDetailsClick, darkMode }) => {
 
     try {
       await axios.delete(
-        `http://localhost:3000/hr-management/emp/delete-employee/${empId}`
+        `http://localhost:3000/hr-management/emp/delete-employee/${empId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              user?.token || localStorage.getItem("token")
+            }`,
+          },
+        }
       );
       setDataFromDb((prev) => prev.filter((user) => user.empId !== empId));
       setFilteredUsers((prev) => prev.filter((user) => user.empId !== empId));
@@ -355,12 +382,12 @@ const Members = ({ onDetailsClick, darkMode }) => {
       >
         <thead>
           <tr>
-            <th className="border-b p-2">Actions</th>
             {Object.keys(fieldLabels).map((field) => (
               <th key={field} className="border-b p-2">
                 {fieldLabels[field] || field}
               </th>
             ))}
+            <th className="border-b p-2">Actions</th>
           </tr>
         </thead>
         <tbody>

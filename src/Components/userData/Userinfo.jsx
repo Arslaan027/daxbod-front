@@ -22,7 +22,7 @@ const Userinfo = () => {
         const decodedToken = JSON.parse(atob(token.split(".")[1]));
         const empId = decodedToken.empId;
         const role = decodedToken.role;
-        console.log(`empId: ${empId}, role: ${role}`);
+        // console.log(`empId: ${empId}, role: ${role}`);
         return { empId, role };
       } catch (err) {
         console.error("Error decoding token:", err);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Title from "../../Daxbod/Title";
+import { useNavigate } from "react-router-dom";
 
 // Mock data and other constants
 const initialApplications = [];
@@ -34,6 +35,8 @@ const JobApplication = () => {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [rejectedModalOpen, setRejectedModalOpen] = useState(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -55,7 +58,6 @@ const JobApplication = () => {
 
     fetchApplications();
   }, []);
-
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "N/A";
     const date = new Date(dateString);
@@ -90,6 +92,7 @@ const JobApplication = () => {
       console.error("Failed to update status:", error);
     }
   };
+
   const deleteApplication = async (id) => {
     try {
       const response = await fetch(
@@ -239,6 +242,8 @@ const JobApplication = () => {
                         openScheduleModal(app.id);
                       } else if (step.name === "Interviewed") {
                         openInterviewModal(app);
+                      } else if (step.name === "Selected") {
+                        navigate("/selected");
                       } else if (step.name === "Rejected") {
                         openRejectedModal(app);
                       } else {
@@ -256,11 +261,6 @@ const JobApplication = () => {
                     >
                       <span className="text-xs font-semibold">{step.name}</span>
                     </div>
-
-                    {/* Connecting line */}
-                    {/* {index < statusSteps.length - 1 && (
-                      <div className="absolute top-1/2 right-[-20px] w-full h-1 bg-gray-300 dark:bg-gray-600 z-0"></div>
-                    )} */}
                   </li>
                 ))}
               </ul>
@@ -269,8 +269,8 @@ const JobApplication = () => {
         ))}
       </div>
 
-      {/* Modal for First Call */}
-      {modalOpen && (
+      {/* First Call Modal */}
+      {modalOpen !== null && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
           onClick={() => setModalOpen(null)}
@@ -279,18 +279,18 @@ const JobApplication = () => {
             className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-semibold mb-4">First Call</h2>
+            <h2 className="text-xl font-semibold mb-4">Schedule First Call</h2>
             <p>Would you like to schedule the first call?</p>
             <div className="flex gap-4 mt-4">
               <button
-                className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                onClick={() => handleFirstCallResponse(modalOpen, true)} // "Yes" clicked
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleFirstCallResponse(modalOpen, true)}
               >
                 Yes
               </button>
               <button
-                className="bg-gradient-to-r from-red-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                onClick={() => handleFirstCallResponse(modalOpen, false)} // "No" clicked
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleFirstCallResponse(modalOpen, false)}
               >
                 No
               </button>
@@ -299,8 +299,8 @@ const JobApplication = () => {
         </div>
       )}
 
-      {/* Modal for Scheduling Interview */}
-      {scheduleModalOpen && (
+      {/* Schedule Interview Modal */}
+      {scheduleModalOpen !== null && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
           onClick={() => setScheduleModalOpen(null)}
@@ -348,14 +348,12 @@ const JobApplication = () => {
                 className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
               >
-<<<<<<< HEAD
-                Schedule Interview
-=======
 
-                Schedule
->>>>>>> cb2a0516b2de7e9b815941aae2edda5b14a489c0
+                Schedule Interview
+
               </button>
             </div>
+
 
                 <option value="">Select Manager</option>
                 {managers.map((manager, index) => (
@@ -365,47 +363,34 @@ const JobApplication = () => {
                 ))}
               </select>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Interview Date
-              </label>
+            <div className="mt-4">
+              <label className="block mb-2">Date:</label>
               <input
                 type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded"
                 value={interviewDate}
                 onChange={(e) => setInterviewDate(e.target.value)}
-                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
-            <div className="mb-4 flex gap-3">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Interview Time
-              </label>
+            <div className="mt-4">
+              <label className="block mb-2">Time:</label>
               <input
                 type="time"
+                className="w-full px-3 py-2 border border-gray-300 rounded"
                 value={interviewTime}
                 onChange={(e) => setInterviewTime(e.target.value)}
-                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
               />
             </div>
             <button
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded mt-4"
               onClick={handleScheduleInterview}
             >
-              Confirm
-            </button>
-            <button
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-              // onClick={handleScheduleInterview}
-            ></button>
-            <button
-              className="ml-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-              onClick={() => setScheduleModalOpen(null)}
-            >
-              Close
+              Schedule Interview
             </button>
           </div>
         </div>
       )}
+
 
       {/* Details Modal */}
       {detailsModalOpen && selectedApplication && (
@@ -443,7 +428,9 @@ const JobApplication = () => {
         </div>
       )}
 
-      {/* Modal for Interview Feedback */}
+
+      {/* Interview Feedback Modal */}
+
       {interviewModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -454,71 +441,69 @@ const JobApplication = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-semibold mb-4">Interview Feedback</h2>
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block mb-2">Interview Feedback</label>
-                <textarea
-                  className="w-full border border-gray-300 rounded p-2"
-                  value={interviewFeedback}
-                  onChange={(e) => setInterviewFeedback(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Final Status</label>
-                <select
-                  className="w-full border border-gray-300 rounded p-2"
-                  value={finalStatus}
-                  onChange={(e) => setFinalStatus(e.target.value)}
-                >
-                  <option value="">Select Status</option>
-                  {statusSteps.slice(4).map((status) => (
-                    <option key={status.name} value={status.name}>
-                      {status.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button
-                className="bg-gradient-to-r from-yellow-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                onClick={handleInterviewCompletion}
-              >
-                Save Feedback
-              </button>
+
+            <div>
+              <label className="block mb-2">Interview Feedback:</label>
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+                rows="4"
+                value={interviewFeedback}
+                onChange={(e) => setInterviewFeedback(e.target.value)}
+              />
             </div>
+            <div className="mt-4">
+              <label className="block mb-2">Final Status:</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded"
+                value={finalStatus}
+                onChange={(e) => setFinalStatus(e.target.value)}
+
+              >
+                <option value="">Select Status</option>
+                <option value="Selected">Selected</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <button
+              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded mt-4"
+              onClick={handleInterviewCompletion}
+            >
+              Submit Feedback
+            </button>
           </div>
         </div>
       )}
 
-      {/* Modal for Rejected Status */}
+      {/* Rejected Status Modal */}
       {rejectedModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 dark:bg-gray-500 bg-opacity-50 dark:bg-opacity-50 z-50">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              Application Rejected
-            </h2>
-            <p className="mb-4 text-gray-700 dark:text-gray-300">
-              What would you like to do with this application?
-            </p>
-            <div className="flex gap-2">
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setRejectedModalOpen(null)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Rejected Status</h2>
+            <p>What would you like to do with this application?</p>
+            <div className="flex gap-4 mt-4">
               <button
-                className="bg-gradient-to-r from-red-500 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+
                 onClick={() => handleRejectedAction("Hold")}
               >
                 Hold
               </button>
               <button
-                className="bg-gradient-to-r from-yellow-500 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+
                 onClick={() => handleRejectedAction("Remove")}
               >
                 Remove
               </button>
             </div>
-            <button
-              className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-              onClick={() => setRejectedModalOpen(null)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
