@@ -243,7 +243,7 @@ const JobApplication = () => {
                       } else if (step.name === "Interviewed") {
                         openInterviewModal(app);
                       } else if (step.name === "Selected") {
-                        navigate("/selected");
+                        navigate(`/selected/${app.id}`);
                       } else if (step.name === "Rejected") {
                         openRejectedModal(app);
                       } else {

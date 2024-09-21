@@ -213,7 +213,7 @@ function App() {
             <Route path="/application-form" element={<Form />} />
             <Route path="/feedback" element={<FeedbackSupport />} />
             <Route path="/my-info" element={<Userinfo />} />
-            <Route path="/selected" element={<SelectedForm />} />
+            <Route path="/selected/:id" element={<SelectedForm />} />
             <Route path="/hold-application" element={<HoldApplications />} />
             <Route path="/emp-feedbacks" element={<EmpFeedbacks />} />
 

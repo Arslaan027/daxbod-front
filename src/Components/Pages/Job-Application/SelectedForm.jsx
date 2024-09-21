@@ -21,7 +21,8 @@ const SelectedForm = () => {
     imageFile: null,
   });
 
-  const [jobApplicationId, setJobApplicationId] = useState(id); // Set the job application ID from URL
+  const [jobApplicationId, setJobApplicationId] = useState(id);
+  console.log("jobApplicationId", jobApplicationId); // Set the job application ID from URL
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const SelectedForm = () => {
       formDataToSend.append("jobApplicationId", jobApplicationId);
 
       // console.log("Job Application ID for submission:", jobApplicationId);
-
+      const token = localStorage.getItem("token");
       // Submit employee data
       const response = await axios.post(
         "http://localhost:3000/hr-management/emp/add-employee",
@@ -79,6 +80,7 @@ const SelectedForm = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -120,17 +122,24 @@ const SelectedForm = () => {
   };
 
   const handleDeleteJobApplication = async (jobApplicationId) => {
+    console.log(jobApplicationId);
     if (!jobApplicationId) {
       console.error("No job application ID provided.");
       return;
     }
 
     console.log("Deleting job application ID:", jobApplicationId);
+    const token = localStorage.getItem("token");
+
     try {
       const response = await fetch(
-        "http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}",
+        `http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}`,
         {
           method: "DELETE",
+          headers: {
+            // Use headers instead of just Authorization in the request
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
