@@ -7,6 +7,7 @@ const PIPlist = ({ darkMode }) => {
   const [showForm, setShowForm] = useState(false);
   const [employee, setEmployee] = useState({
     empId: "",
+    name: "",
     description: "",
     startDate: "",
     endDate: "",
@@ -65,6 +66,7 @@ const PIPlist = ({ darkMode }) => {
   const resetForm = () => {
     setEmployee({
       empId: "",
+      name: "",
       description: "",
       startDate: "",
       endDate: "",
@@ -181,7 +183,7 @@ const PIPlist = ({ darkMode }) => {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-100">
-                  {emp.empId} {/* Display Employee ID */}
+                  {emp.name} {/* Display Employee Name */}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-100">
                   {/* {emp.description} */}

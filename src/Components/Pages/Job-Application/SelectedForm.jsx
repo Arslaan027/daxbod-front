@@ -1,8 +1,17 @@
+
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // Ensure this import is included
+import axios from "axios";
+
+const SelectedForm = () => {
+  const { id } = useParams(); // Destructure id from useParams
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SelectedForm = () => {
+
   const [formData, setFormData] = useState({
     empId: "",
     name: "",
@@ -20,7 +29,19 @@ const SelectedForm = () => {
     imageFile: null,
   });
 
+
+  const [jobApplicationId, setJobApplicationId] = useState(id); // Set the job application ID from URL
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("id:", id);
+    if (id && id !== "" && id !== null && id !== undefined) {
+      setJobApplicationId(id);
+      console.log("Job Application ID:", jobApplicationId);
+      // Fetch job application details or perform any necessary actions
+    }
+  }, [id]);
+
 
   const backButton = () => {
     navigate(-1);
@@ -37,6 +58,7 @@ const SelectedForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
 
     const userRole = localStorage.getItem("role");
     const token = localStorage.getItem("token");
@@ -58,12 +80,25 @@ const SelectedForm = () => {
 
     try {
       // Step 1: Submit employee data
+
       const response = await axios.post(
         "http://localhost:3000/hr-management/emp/add-employee",
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+
+          },
+        }
+      );
+
+      console.log(response.data.message);
+      alert("Employee added successfully!");
+
+      //   setJobApplicationId(id);
+
+      await handleDeleteJobApplication(jobApplicationId); // Pass correct jobApplicationId
+
             Authorization: `Bearer ${token}`,
           },
         }
@@ -80,6 +115,7 @@ const SelectedForm = () => {
       } else {
         console.error("Job application ID not found in response.");
       }
+
 
       // Reset form data
       setFormData({
@@ -99,33 +135,45 @@ const SelectedForm = () => {
         imageFile: null,
       });
 
+
       navigate("/employee");
     } catch (error) {
       console.error("Error adding employee:", error);
+
       alert("Error adding employee. Please try again.");
     }
   };
 
-  const handleDeleteJobApplication = async (id) => {
-    console.log("Deleting job application ID:", id);
+
+  const handleDeleteJobApplication = async (jobApplicationId) => {
+    if (!jobApplicationId) {
+      console.error("No job application ID provided.");
+      return;
+    }
+
+    console.log("Deleting job application ID:", jobApplicationId);
     try {
       const response = await fetch(
-        `http://localhost:3000/hr-management/applicants/delete/${id}`,
+        `http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete job application.");
+
+        const data = await response.json();
+        throw new Error(data.message || "Failed to delete job application.");
+
       }
 
       const data = await response.json();
       console.log(data.message);
       alert("Job application deleted successfully!");
+
+      setJobApplicationId(null);
+
     } catch (error) {
       console.error("Error deleting job application:", error);
       alert("Error deleting job application. Please try again.");
@@ -299,6 +347,7 @@ const SelectedForm = () => {
             </div>
           </div>
         </div>
+
         <button
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded"

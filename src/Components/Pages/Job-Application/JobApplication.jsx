@@ -3,7 +3,7 @@ import Title from "../../Daxbod/Title";
 import { useNavigate } from "react-router-dom";
 
 // Mock data and other constants
-const initialApplications = []; // Initial empty array, we'll populate it from the backend
+const initialApplications = [];
 
 const statusSteps = [
   { name: "Applied", color: "bg-gray-500" },
@@ -61,7 +61,7 @@ const JobApplication = () => {
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "N/A";
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "Invalid Date"; // Handle invalid dates
+    if (isNaN(date.getTime())) return "Invalid Date";
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -109,7 +109,6 @@ const JobApplication = () => {
       const data = await response.json();
       console.log(data.message);
 
-      // Remove the deleted application from the state
       setApplications((prevApps) => prevApps.filter((app) => app.id !== id));
     } catch (error) {
       console.error("Failed to delete application:", error);
@@ -311,13 +310,51 @@ const JobApplication = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-semibold mb-4">Schedule Interview</h2>
-            <div>
-              <label className="block mb-2">Select Manager:</label>
-              <select
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-                value={selectedManager}
-                onChange={(e) => setSelectedManager(e.target.value)}
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block mb-2">Manager</label>
+                <select
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={selectedManager}
+                  onChange={(e) => setSelectedManager(e.target.value)}
+                >
+                  <option value="">Select Manager</option>
+                  {managers.map((manager) => (
+                    <option key={manager} value={manager}>
+                      {manager}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block mb-2">Date</label>
+                <input
+                  type="date"
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={interviewDate}
+                  onChange={(e) => setInterviewDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block mb-2">Time</label>
+                <input
+                  type="time"
+                  className="w-full border border-gray-300 rounded p-2"
+                  value={interviewTime}
+                  onChange={(e) => setInterviewTime(e.target.value)}
+                />
+              </div>
+              <button
+                className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={handleScheduleInterview}
               >
+
+                Schedule Interview
+
+              </button>
+            </div>
+
+
                 <option value="">Select Manager</option>
                 {managers.map((manager, index) => (
                   <option key={index} value={manager}>
@@ -354,7 +391,46 @@ const JobApplication = () => {
         </div>
       )}
 
+
+      {/* Details Modal */}
+      {detailsModalOpen && selectedApplication && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setDetailsModalOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Application Details</h2>
+            <p>
+              <strong>Name:</strong> {selectedApplication.fullname}
+            </p>
+            <p>
+              <strong>Position:</strong>{" "}
+              {selectedApplication.positionAppliedFor}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedApplication.location}
+            </p>
+            <p>
+              <strong>Date Applied:</strong>{" "}
+              {formatDate(selectedApplication.dateApplied)}
+            </p>
+            {/* Add more details as needed */}
+            <button
+              className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+              onClick={() => setDetailsModalOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+
       {/* Interview Feedback Modal */}
+
       {interviewModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -365,6 +441,7 @@ const JobApplication = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-semibold mb-4">Interview Feedback</h2>
+
             <div>
               <label className="block mb-2">Interview Feedback:</label>
               <textarea
@@ -380,6 +457,7 @@ const JobApplication = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded"
                 value={finalStatus}
                 onChange={(e) => setFinalStatus(e.target.value)}
+
               >
                 <option value="">Select Status</option>
                 <option value="Selected">Selected</option>
@@ -410,13 +488,17 @@ const JobApplication = () => {
             <p>What would you like to do with this application?</p>
             <div className="flex gap-4 mt-4">
               <button
+
                 className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+
                 onClick={() => handleRejectedAction("Hold")}
               >
                 Hold
               </button>
               <button
+
                 className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+
                 onClick={() => handleRejectedAction("Remove")}
               >
                 Remove
