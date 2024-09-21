@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Title from "../../Daxbod/Title";
+import { useNavigate } from "react-router-dom";
 
 // Mock data and other constants
 const initialApplications = [];
@@ -33,6 +34,8 @@ const JobApplication = () => {
   const [finalStatus, setFinalStatus] = useState("");
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [rejectedModalOpen, setRejectedModalOpen] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -239,6 +242,8 @@ const JobApplication = () => {
                         openScheduleModal(app.id);
                       } else if (step.name === "Interviewed") {
                         openInterviewModal(app);
+                      } else if (step.name === "Selected") {
+                        navigate("/selected");
                       } else if (step.name === "Rejected") {
                         openRejectedModal(app);
                       } else {
@@ -283,13 +288,13 @@ const JobApplication = () => {
             <p>Would you like to schedule the first call?</p>
             <div className="flex gap-4 mt-4">
               <button
-                className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => handleFirstCallResponse(modalOpen, true)} // "Yes" clicked
               >
                 Yes
               </button>
               <button
-                className="bg-gradient-to-r from-red-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => handleFirstCallResponse(modalOpen, false)} // "No" clicked
               >
                 No
@@ -348,61 +353,21 @@ const JobApplication = () => {
                 className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
               >
-<<<<<<< HEAD
                 Schedule Interview
-=======
-
-                Schedule
->>>>>>> cb2a0516b2de7e9b815941aae2edda5b14a489c0
               </button>
             </div>
-
-                <option value="">Select Manager</option>
-                {managers.map((manager, index) => (
-                  <option key={index} value={manager}>
-                    {manager}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Interview Date
-              </label>
-              <input
-                type="date"
-                value={interviewDate}
-                onChange={(e) => setInterviewDate(e.target.value)}
-                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div className="mb-4 flex gap-3">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Interview Time
-              </label>
-              <input
-                type="time"
-                value={interviewTime}
-                onChange={(e) => setInterviewTime(e.target.value)}
-                className="border rounded-lg p-2 w-full dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <button
+            {/* <button
               className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
               onClick={handleScheduleInterview}
             >
               Confirm
-            </button>
-            <button
-              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-              // onClick={handleScheduleInterview}
-            ></button>
-            <button
+            </button> */}
+            {/* <button
               className="ml-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
               onClick={() => setScheduleModalOpen(null)}
             >
               Close
-            </button>
+            </button> */}
           </div>
         </div>
       )}
