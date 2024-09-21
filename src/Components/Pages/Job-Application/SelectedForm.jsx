@@ -1,17 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Ensure this import is included
 import axios from "axios";
 
 const SelectedForm = () => {
   const { id } = useParams(); // Destructure id from useParams
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const SelectedForm = () => {
-
   const [formData, setFormData] = useState({
     empId: "",
     name: "",
@@ -29,7 +21,6 @@ const SelectedForm = () => {
     imageFile: null,
   });
 
-
   const [jobApplicationId, setJobApplicationId] = useState(id); // Set the job application ID from URL
   const navigate = useNavigate();
 
@@ -41,7 +32,6 @@ const SelectedForm = () => {
       // Fetch job application details or perform any necessary actions
     }
   }, [id]);
-
 
   const backButton = () => {
     navigate(-1);
@@ -58,36 +48,37 @@ const SelectedForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Job Application ID for submission:", jobApplicationId);
+    const { imageFile, ...data } = formData;
 
-
-    const userRole = localStorage.getItem("role");
-    const token = localStorage.getItem("token");
-
-    if (userRole !== "HR" && userRole !== "ADMIN") {
-      alert("You do not have permission to add an employee.");
+    if (!imageFile) {
+      alert("Please upload an image file");
       return;
     }
 
-    const { imageFile, ...data } = formData;
+    if (!jobApplicationId) {
+      alert("No job application ID provided");
 
-    const formDataToSend = new FormData();
-    Object.keys(data).forEach((key) => {
-      formDataToSend.append(key, data[key]);
-    });
-    if (imageFile) {
-      formDataToSend.append("image", imageFile);
+      return;
     }
 
     try {
-      // Step 1: Submit employee data
+      const formDataToSend = new FormData();
+      Object.keys(data).forEach((key) => {
+        formDataToSend.append(key, data[key]);
+      });
+      formDataToSend.append("image", imageFile);
+      formDataToSend.append("jobApplicationId", jobApplicationId);
 
+      // console.log("Job Application ID for submission:", jobApplicationId);
+
+      // Submit employee data
       const response = await axios.post(
         "http://localhost:3000/hr-management/emp/add-employee",
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-
           },
         }
       );
@@ -98,24 +89,6 @@ const SelectedForm = () => {
       //   setJobApplicationId(id);
 
       await handleDeleteJobApplication(jobApplicationId); // Pass correct jobApplicationId
-
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log(response.data.message); // Log the response to inspect its structure
-      alert("Employee added successfully!");
-
-      const id = response.data.id; // Ensure the back-end returns the job application ID
-
-      // Step 2: Delete job application if ID is returned
-      if (id) {
-        await handleDeleteJobApplication(id);
-      } else {
-        console.error("Job application ID not found in response.");
-      }
-
 
       // Reset form data
       setFormData({
@@ -135,15 +108,16 @@ const SelectedForm = () => {
         imageFile: null,
       });
 
-
-      navigate("/employee");
+      setJobApplicationId(null);
+      // navigate to employee or another page
     } catch (error) {
-      console.error("Error adding employee:", error);
-
+      console.error(
+        "Error adding employee:",
+        error.response ? error.response.data : error.message
+      );
       alert("Error adding employee. Please try again.");
     }
   };
-
 
   const handleDeleteJobApplication = async (jobApplicationId) => {
     if (!jobApplicationId) {
@@ -154,26 +128,21 @@ const SelectedForm = () => {
     console.log("Deleting job application ID:", jobApplicationId);
     try {
       const response = await fetch(
-        `http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}`,
+        "http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}",
         {
           method: "DELETE",
-
         }
       );
 
       if (!response.ok) {
-
         const data = await response.json();
         throw new Error(data.message || "Failed to delete job application.");
-
       }
 
       const data = await response.json();
       console.log(data.message);
       alert("Job application deleted successfully!");
-
       setJobApplicationId(null);
-
     } catch (error) {
       console.error("Error deleting job application:", error);
       alert("Error deleting job application. Please try again.");

@@ -299,7 +299,6 @@ const JobApplication = () => {
         </div>
       )}
 
-      {/* Schedule Interview Modal */}
       {scheduleModalOpen !== null && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -311,6 +310,7 @@ const JobApplication = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Schedule Interview</h2>
             <div className="flex flex-col gap-4">
+              {/* Manager Selection */}
               <div>
                 <label className="block mb-2">Manager</label>
                 <select
@@ -319,13 +319,15 @@ const JobApplication = () => {
                   onChange={(e) => setSelectedManager(e.target.value)}
                 >
                   <option value="">Select Manager</option>
-                  {managers.map((manager) => (
-                    <option key={manager} value={manager}>
+                  {managers.map((manager, index) => (
+                    <option key={index} value={manager}>
                       {manager}
                     </option>
                   ))}
                 </select>
               </div>
+
+              {/* Date Input */}
               <div>
                 <label className="block mb-2">Date</label>
                 <input
@@ -335,6 +337,8 @@ const JobApplication = () => {
                   onChange={(e) => setInterviewDate(e.target.value)}
                 />
               </div>
+
+              {/* Time Input */}
               <div>
                 <label className="block mb-2">Time</label>
                 <input
@@ -344,53 +348,18 @@ const JobApplication = () => {
                   onChange={(e) => setInterviewTime(e.target.value)}
                 />
               </div>
+
+              {/* Submit Button */}
               <button
                 className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
               >
-
                 Schedule Interview
-
               </button>
             </div>
-
-
-                <option value="">Select Manager</option>
-                {managers.map((manager, index) => (
-                  <option key={index} value={manager}>
-                    {manager}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mt-4">
-              <label className="block mb-2">Date:</label>
-              <input
-                type="date"
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-                value={interviewDate}
-                onChange={(e) => setInterviewDate(e.target.value)}
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block mb-2">Time:</label>
-              <input
-                type="time"
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-                value={interviewTime}
-                onChange={(e) => setInterviewTime(e.target.value)}
-              />
-            </div>
-            <button
-              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded mt-4"
-              onClick={handleScheduleInterview}
-            >
-              Schedule Interview
-            </button>
           </div>
         </div>
       )}
-
 
       {/* Details Modal */}
       {detailsModalOpen && selectedApplication && (
@@ -428,7 +397,6 @@ const JobApplication = () => {
         </div>
       )}
 
-
       {/* Interview Feedback Modal */}
 
       {interviewModalOpen && (
@@ -457,7 +425,6 @@ const JobApplication = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded"
                 value={finalStatus}
                 onChange={(e) => setFinalStatus(e.target.value)}
-
               >
                 <option value="">Select Status</option>
                 <option value="Selected">Selected</option>
@@ -488,17 +455,13 @@ const JobApplication = () => {
             <p>What would you like to do with this application?</p>
             <div className="flex gap-4 mt-4">
               <button
-
                 className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-
                 onClick={() => handleRejectedAction("Hold")}
               >
                 Hold
               </button>
               <button
-
                 className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-
                 onClick={() => handleRejectedAction("Remove")}
               >
                 Remove
