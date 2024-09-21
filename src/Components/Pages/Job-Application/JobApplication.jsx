@@ -184,7 +184,7 @@ const JobApplication = () => {
 
   const handleRejectedAction = async (action) => {
     if (action === "Hold") {
-      await handleStatusChange(selectedApplication.id, "On Hold");
+      await navigate("/hold-application");
     } else if (action === "Remove") {
       await deleteApplication(selectedApplication.id);
     }
