@@ -16,7 +16,7 @@ const FeedbackSupport = () => {
   };
 
   return (
-    <div className="p-4 md:ml-64 pt-24">
+    <div className="p-4 md:ml-64 pt-24 bg-gray-100 min-h-screen h-auto">
       <h2 className="text-2xl font-bold mb-4">Feedback and Support</h2>
 
       <form onSubmit={handleSubmit} className="mb-6">

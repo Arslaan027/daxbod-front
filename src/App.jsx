@@ -23,6 +23,9 @@ import FeedbackSupport from "./Components/UserExtraPages/FeedbackSupport";
 import CompliancePolicies from "./Components/UserExtraPages/CompliancePolicies";
 import CompanyAnnouncements from "./Components/UserExtraPages/CompanyAnnouncements";
 import Userinfo from "./Components/userData/Userinfo";
+import SelectedForm from "./Components/Pages/Job-Application/SelectedForm";
+import HoldApplications from "./Components/Pages/Job-Application/HoldApplications";
+import EmpFeedbacks from "./Components/Pages/EmpFeedbacks/EmpFeedbacks";
 
 const salaryData = [
   {
@@ -210,6 +213,10 @@ function App() {
             <Route path="/application-form" element={<Form />} />
             <Route path="/feedback" element={<FeedbackSupport />} />
             <Route path="/my-info" element={<Userinfo />} />
+            <Route path="/selected" element={<SelectedForm />} />
+            <Route path="/hold-application" element={<HoldApplications />} />
+            <Route path="/emp-feedbacks" element={<EmpFeedbacks />} />
+
             <Route
               path="/compliance-policies"
               element={<CompliancePolicies />}

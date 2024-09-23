@@ -34,8 +34,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         darkColor: "dark:bg-gray-700 dark:text-gray-300",
       },
     },
+    //
     { to: "/lms", icon: FaBookOpen, text: "LMS" },
     { to: "/inventory", icon: FaBoxes, text: "Inventory" },
+    { to: "/job-application", icon: FaBriefcase, text: "Job Applications" },
+    { to: "/hold-application", icon: FaBookOpen, text: "Hold Aplications" },
+    { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
   ];
 
   const userLinks = [
@@ -76,12 +80,15 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     },
     { to: "/my-info", icon: BiDetail, text: "Employee Details" },
 
-    { to: "/job-application", icon: FaBriefcase, text: "Job Application" },
+    { to: "/job-application", icon: FaBriefcase, text: "Job Applications" },
+    { to: "/hold-application", icon: FaBookOpen, text: "Hold Aplications" },
+
     {
       to: "/application-form",
       icon: FaClipboardList,
       text: "Application Form",
     },
+    { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
   ];
 
   // Determine which links to display based on user role
@@ -108,7 +115,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       }`}
     >
       <div className="h-full px-3 pb-4 overflow-y-auto">
-        <ul className="space-y-2 font-medium">
+        <ul className="space-y-1 font-medium">
           {linksToDisplay.length > 0 ? (
             linksToDisplay.map((link, index) => (
               <li key={index}>
