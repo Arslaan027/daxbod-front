@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SelectedForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
 
   const [formData, setFormData] = useState({
     empId: "",
@@ -25,11 +23,8 @@ const SelectedForm = () => {
     imageFile: null,
   });
 
-
   const [jobApplicationId, setJobApplicationId] = useState(id);
   console.log("jobApplicationId", jobApplicationId); // Set the job application ID from URL
-
-
 
   useEffect(() => {
     if (id) {
@@ -59,24 +54,23 @@ const SelectedForm = () => {
 
     if (userRole !== "HR" && userRole !== "ADMIN") {
       alert("You do not have permission to add an employee.");
+      return;
+    }
 
     console.log("Job Application ID for submission:", jobApplicationId);
     const { imageFile, ...data } = formData;
 
     if (!imageFile) {
       alert("Please upload an image file");
-
       return;
     }
 
     if (!jobApplicationId) {
       alert("No job application ID provided");
-
       return;
     }
 
     try {
-
       const formDataToSend = new FormData();
       Object.keys(data).forEach((key) => {
         formDataToSend.append(key, data[key]);
@@ -84,32 +78,20 @@ const SelectedForm = () => {
       formDataToSend.append("image", imageFile);
       formDataToSend.append("jobApplicationId", jobApplicationId);
 
-      // console.log("Job Application ID for submission:", jobApplicationId);
-      const token = localStorage.getItem("token");
-      // Submit employee data
-
       const response = await axios.post(
         "http://localhost:3000/hr-management/emp/add-employee",
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-
             Authorization: `Bearer ${token}`, // Correctly placed Authorization header
-
           },
         }
       );
 
       console.log(response.data.message);
       alert("Employee added successfully!");
-
-
-      await handleDeleteJobApplication(id); // Use id directly
-
-
       await handleDeleteJobApplication(jobApplicationId); // Pass correct jobApplicationId
-
 
       // Reset form data
       setFormData({
@@ -129,11 +111,9 @@ const SelectedForm = () => {
         imageFile: null,
       });
 
-
       navigate("/employee");
     } catch (error) {
       console.error("Error adding employee:", error);
-
       alert("Error adding employee. Please try again.");
     }
   };
@@ -153,12 +133,9 @@ const SelectedForm = () => {
         `http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}`,
         {
           method: "DELETE",
-
           headers: {
-            // Use headers instead of just Authorization in the request
             Authorization: `Bearer ${token}`,
           },
-
         }
       );
 
@@ -172,7 +149,6 @@ const SelectedForm = () => {
       alert("Job application deleted successfully!");
 
       setJobApplicationId(null);
-
     } catch (error) {
       console.error("Error deleting job application:", error);
       alert("Error deleting job application. Please try again.");

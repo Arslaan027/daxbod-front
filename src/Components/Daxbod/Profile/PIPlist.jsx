@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import Title from "../Title";
 import { IoMdPersonAdd } from "react-icons/io";
 import "../../scrollbar.css";
+import { useNavigate } from "react-router-dom";
 
 const PIPlist = ({ darkMode }) => {
   const [showForm, setShowForm] = useState(false);
@@ -24,15 +25,13 @@ const PIPlist = ({ darkMode }) => {
         const res = await axios.get(
           "http://localhost:3000/hr-management/PIP/get-pip"
         );
-        // console.log("API Response:", res.data[0]);
 
-        // Extract PIP entries from the response
         if (
           Array.isArray(res.data) &&
           res.data.length > 0 &&
           Array.isArray(res.data[0])
         ) {
-          setEmployees(res.data[0]); // Set employees with the first sub-array
+          setEmployees(res.data[0]);
         } else {
           throw new Error("API response is not in the expected format.");
         }
@@ -53,7 +52,6 @@ const PIPlist = ({ darkMode }) => {
           "http://localhost:3000/hr-management/PIP/add-pip",
           employee
         );
-        // console.log("Submitted Data:", res.data); // Log the submitted data
         setDataFromDb((prev) => [...prev, res.data]);
         resetForm();
       } catch (error) {
@@ -87,7 +85,7 @@ const PIPlist = ({ darkMode }) => {
         <Title>PIP Employees</Title>
         <button
           className="text-gray-500 py-2 px-4 rounded-full flex items-center justify-center"
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => setShowForm(true)} // Open modal
         >
           <IoMdPersonAdd className="text-2xl" />
         </button>
@@ -95,81 +93,111 @@ const PIPlist = ({ darkMode }) => {
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
+      {/* Modal for the form */}
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="bg-gray-200 p-4 rounded-lg mb-4"
-        >
-          <div className="mb-2">
-            <label htmlFor="empId" className="block mb-1">
-              Employee ID
-            </label>
-            <input
-              type="text"
-              name="empId"
-              value={employee.empId}
-              onChange={handleChange}
-              className="p-2 border rounded w-full"
-              required
-            />
+        <div className="fixed inset-0 mt-14 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-lg p-4 shadow-lg max-w-lg w-full">
+            <button
+              onClick={resetForm}
+              className="absolute top-2 right-2 text-gray-600"
+            >
+              &times; {/* Close button */}
+            </button>
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl">
+              <div className="mb-2">
+                <label htmlFor="empId" className="block mb-1">
+                  Employee ID
+                </label>
+                <input
+                  type="text"
+                  name="empId"
+                  value={employee.empId}
+                  onChange={handleChange}
+                  className="p-2 border rounded w-full"
+                  required
+                />
+              </div>
+              <div className="mb-2">
+                <label htmlFor="name" className="block mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={employee.name}
+                  onChange={handleChange}
+                  className="p-2 border rounded w-full"
+                  required
+                />
+              </div>
+              <div className="mb-2">
+                <label htmlFor="description" className="block mb-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={employee.description}
+                  onChange={handleChange}
+                  className="p-2 text-black border rounded w-full"
+                  required
+                />
+              </div>
+              <div className="mb-2">
+                <label htmlFor="startDate" className="block mb-1">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={employee.startDate}
+                  onChange={handleChange}
+                  className="p-2 border rounded w-full"
+                  required
+                />
+              </div>
+              <div className="mb-2">
+                <label htmlFor="endDate" className="block mb-1">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={employee.endDate}
+                  onChange={handleChange}
+                  className="p-2 border rounded w-full"
+                />
+              </div>
+              <div className="mb-2">
+                <label htmlFor="status" className="block mb-1">
+                  Status
+                </label>
+                <input
+                  type="text"
+                  name="status"
+                  value={employee.status}
+                  onChange={handleChange}
+                  className="p-2 border rounded w-full"
+                  required
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button" // Change type to button to avoid form submission
+                  onClick={resetForm} // Call resetForm on click
+                  className="p-2 bg-gray-500 text-white rounded-lg w-full"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="p-2 bg-green-500 text-white rounded-lg w-full"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
-          <div className="mb-2">
-            <label htmlFor="description" className="block mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={employee.description}
-              onChange={handleChange}
-              className="p-2 text-black border rounded w-full"
-              required
-            />
-          </div>
-          <div className="mb-2">
-            <label htmlFor="startDate" className="block mb-1">
-              Start Date
-            </label>
-            <input
-              type="date"
-              name="startDate"
-              value={employee.startDate}
-              onChange={handleChange}
-              className="p-2 border rounded w-full"
-              required
-            />
-          </div>
-          <div className="mb-2">
-            <label htmlFor="endDate" className="block mb-1">
-              End Date
-            </label>
-            <input
-              type="date"
-              name="endDate"
-              value={employee.endDate}
-              onChange={handleChange}
-              className="p-2 border rounded w-full"
-            />
-          </div>
-          <div className="mb-2">
-            <label htmlFor="status" className="block mb-1">
-              Status
-            </label>
-            <input
-              type="text"
-              name="status"
-              value={employee.status}
-              onChange={handleChange}
-              className="p-2 border rounded w-full"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="p-2 bg-green-500 text-white rounded-lg w-full"
-          >
-            Submit
-          </button>
-        </form>
+        </div>
       )}
 
       {employees.length > 0 && (
