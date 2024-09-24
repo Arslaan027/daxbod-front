@@ -1,0 +1,26 @@
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Customize scrollbar width */
+    margin-left: 5px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 10px;
+    border: 2px solid lightgray;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: lightgray;
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: darkgray; /* Thumb color when hovered */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+
+  
+  

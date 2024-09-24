@@ -36,23 +36,35 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     },
     //
     { to: "/lms", icon: FaBookOpen, text: "LMS" },
-    { to: "/inventory", icon: FaBoxes, text: "Inventory" },
+    // { to: "/inventory", icon: FaBoxes, text: "Inventory" },
     { to: "/job-application", icon: FaBriefcase, text: "Job Applications" },
     { to: "/hold-application", icon: FaBookOpen, text: "Hold Aplications" },
-    { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
+    // { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
   ];
 
   const userLinks = [
     { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
-    { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
+    // { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
     { to: "/my-info", icon: BiDetail, text: "Employee Details" },
     { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
-    { to: "/feedback", icon: FaComments, text: "Feedback" },
-    {
-      to: "/compliance-policies",
-      icon: FaFileContract,
-      text: "Compliance Policies",
-    },
+    // { to: "/feedback", icon: FaComments, text: "Feedback" },
+    // {
+    //   to: "/compliance-policies",
+    //   icon: FaFileContract,
+    //   text: "Compliance Policies",
+    // },
+  ];
+  const managerLinks = [
+    { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
+    // { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
+    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+    { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
+    // { to: "/feedback", icon: FaComments, text: "Feedback" },
+    // {
+    //   to: "/compliance-policies",
+    //   icon: FaFileContract,
+    //   text: "Compliance Policies",
+    // },
   ];
 
   const adminLinks = [
@@ -68,16 +80,16 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       },
     },
     { to: "/lms", icon: FaBookOpen, text: "LMS" },
-    { to: "/inventory", icon: FaBoxes, text: "Inventory" },
-    { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
+    // { to: "/inventory", icon: FaBoxes, text: "Inventory" },
+    // { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
     { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
     { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
-    { to: "/feedback", icon: FaComments, text: "Feedback" },
-    {
-      to: "/compliance-policies",
-      icon: FaFileContract,
-      text: "Compliance Policies",
-    },
+    // { to: "/feedback", icon: FaComments, text: "Feedback" },
+    // {
+    //   to: "/compliance-policies",
+    //   icon: FaFileContract,
+    //   text: "Compliance Policies",
+    // },
     { to: "/my-info", icon: BiDetail, text: "Employee Details" },
 
     { to: "/job-application", icon: FaBriefcase, text: "Job Applications" },
@@ -88,7 +100,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       icon: FaClipboardList,
       text: "Application Form",
     },
-    { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
+    { to: "/off-board", icon: FaBookOpen, text: "Off-Board Employee" },
+    // { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
   ];
 
   // Determine which links to display based on user role
@@ -97,6 +110,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     linksToDisplay = adminLinks;
   } else if (userRole === "HR") {
     linksToDisplay = hrLinks;
+  } else if (userRole === "MANAGER") {
+    linksToDisplay = managerLinks;
   } else if (userRole === "EMP") {
     linksToDisplay = userLinks;
   } else {

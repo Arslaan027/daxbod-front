@@ -1,0 +1,12 @@
+@keyframes blink {
+    0%, 100% {
+      color: black;
+    }
+    50% {
+      color: #f56565; 
+    }
+  }
+
+  .blinking {
+    animation: blink 1s infinite;
+  }

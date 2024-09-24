@@ -184,6 +184,7 @@ const JobApplication = () => {
 
   const handleRejectedAction = async (action) => {
     if (action === "Hold") {
+
       try {
         const response = await fetch(
           `http://localhost:3000/hr-management/applicants/hold/${selectedApplication.Id}`,
@@ -210,6 +211,7 @@ const JobApplication = () => {
       } catch (error) {
         console.error("Failed to move to Hold:", error);
       }
+
     } else if (action === "Remove") {
       await deleteApplication(selectedApplication.Id);
     }
@@ -319,7 +321,9 @@ const JobApplication = () => {
                       } else if (step.name === "Interviewed") {
                         openInterviewModal(app);
                       } else if (step.name === "Selected") {
+
                         navigate(`/selected/${app.Id}`);
+
                       } else if (step.name === "Rejected") {
                         openRejectedModal(app);
                       } else {
@@ -376,7 +380,6 @@ const JobApplication = () => {
         </div>
       )}
 
-      {/* Schedule Interview Modal */}
       {scheduleModalOpen !== null && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -388,6 +391,7 @@ const JobApplication = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Schedule Interview</h2>
             <div className="flex flex-col gap-4">
+              {/* Manager Selection */}
               <div>
                 <label className="block mb-2">Manager</label>
                 <select
@@ -403,6 +407,8 @@ const JobApplication = () => {
                   ))}
                 </select>
               </div>
+
+              {/* Date Input */}
               <div>
                 <label className="block mb-2">Interview Date</label>
                 <input
@@ -412,6 +418,8 @@ const JobApplication = () => {
                   onChange={(e) => setInterviewDate(e.target.value)}
                 />
               </div>
+
+              {/* Time Input */}
               <div>
                 <label className="block mb-2">Interview Time</label>
                 <input
@@ -421,6 +429,8 @@ const JobApplication = () => {
                   onChange={(e) => setInterviewTime(e.target.value)}
                 />
               </div>
+
+              {/* Submit Button */}
               <button
                 className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
