@@ -22,6 +22,7 @@ const managers = [
 ];
 
 const JobApplication = () => {
+  const navigate = useNavigate();
   const [applications, setApplications] = useState(initialApplications);
   const [modalOpen, setModalOpen] = useState(null);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(null);
@@ -34,8 +35,6 @@ const JobApplication = () => {
   const [finalStatus, setFinalStatus] = useState("");
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [rejectedModalOpen, setRejectedModalOpen] = useState(null);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -50,6 +49,7 @@ const JobApplication = () => {
           throw new Error("Network response was not ok.");
         }
         const data = await response.json();
+        console.log("Fetched applications:", data);
         setApplications(data);
       } catch (error) {
         console.error("Failed to fetch applications:", error);
@@ -69,10 +69,10 @@ const JobApplication = () => {
     });
   };
 
-  const updateApplicationStatus = async (id, newStatus) => {
+  const updateApplicationStatus = async (Id, newStatus) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/hr-management/applicants/update-status/${id}/status`,
+        `http://localhost:3000/hr-management/applicants/update-status/${Id}`,
         {
           method: "PUT",
           headers: {
@@ -93,10 +93,10 @@ const JobApplication = () => {
     }
   };
 
-  const deleteApplication = async (id) => {
+  const deleteApplication = async (Id) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/hr-management/applicants/delete-app/${id}`,
+        `http://localhost:3000/hr-management/applicants/delete-app/${Id}`,
         {
           method: "DELETE",
         }
@@ -109,19 +109,19 @@ const JobApplication = () => {
       const data = await response.json();
       console.log(data.message);
 
-      setApplications((prevApps) => prevApps.filter((app) => app.id !== id));
+      setApplications((prevApps) => prevApps.filter((app) => app.Id !== Id));
     } catch (error) {
       console.error("Failed to delete application:", error);
     }
   };
 
-  const handleStatusChange = async (id, newStatus) => {
+  const handleStatusChange = async (Id, newStatus) => {
     try {
-      await updateApplicationStatus(id, newStatus);
+      await updateApplicationStatus(Id, newStatus);
 
       setApplications((prevApps) =>
         prevApps.map((app) =>
-          app.id === id ? { ...app, status: newStatus } : app
+          app.id === Id ? { ...app, status: newStatus } : app
         )
       );
     } catch (error) {
@@ -173,7 +173,7 @@ const JobApplication = () => {
   };
 
   const handleInterviewCompletion = () => {
-    handleStatusChange(selectedApplication.id, finalStatus);
+    handleStatusChange(selectedApplication.Id, finalStatus);
     setInterviewModalOpen(null);
     setSelectedManager("");
     setInterviewDate("");
@@ -184,20 +184,88 @@ const JobApplication = () => {
 
   const handleRejectedAction = async (action) => {
     if (action === "Hold") {
-      await navigate("/hold-application");
+
+      try {
+        const response = await fetch(
+          `http://localhost:3000/hr-management/applicants/hold/${selectedApplication.Id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to move to Hold");
+        }
+        const data = await response.json();
+        console.log(data.message);
+
+        // Remove from current list
+        setApplications((prevApps) =>
+          prevApps.filter((app) => app.Id !== selectedApplication.Id)
+        );
+
+        // Navigate to HoldApplications page
+        navigate("/hold-application");
+      } catch (error) {
+        console.error("Failed to move to Hold:", error);
+      }
+
     } else if (action === "Remove") {
-      await deleteApplication(selectedApplication.id);
+      await deleteApplication(selectedApplication.Id);
     }
     setRejectedModalOpen(null);
   };
 
+  const HoldApplications = (app) => {
+    const [holdApplications, setHoldApplications] = useState([]);
+
+    useEffect(() => {
+      const fetchHoldApplications = async () => {
+        try {
+          const response = await fetch(
+            "http://localhost:3000/hr-management/hold-applications"
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch hold applications");
+          }
+          const data = await response.json();
+          setHoldApplications(data);
+        } catch (error) {
+          console.error("Error fetching hold applications:", error);
+        }
+      };
+
+      fetchHoldApplications();
+    }, []);
+
+    return (
+      <div className="bg-gray-100 dark:bg-gray-800 min-h-[100vh] p-4 sm:ml-64 flex flex-col gap-5 mt-14">
+        <h1 className="text-xl font-semibold">Hold Applications</h1>
+        <div className="flex flex-col gap-6">
+          {holdApplications.map((app) => (
+            <div
+              key={app.id}
+              className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700"
+            >
+              <h2 className="text-xl font-semibold">{app.fullname}</h2>
+              <p>{app.positionAppliedFor}</p>
+              <p>{app.location}</p>
+              <p>{formatDate(app.dateApplied)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
   return (
     <div className="bg-gray-100 dark:bg-gray-800 min-h-[100vh] p-4 sm:ml-64 flex flex-col gap-5 mt-14">
       <Title>Job Applications</Title>
       <div className="flex flex-col gap-6">
         {applications.map((app) => (
           <div
-            key={app.id}
+            key={app.Id}
             className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6 border border-gray-300 dark:border-gray-700 relative flex gap-8 items-center"
           >
             <div className="flex-1">
@@ -236,18 +304,31 @@ const JobApplication = () => {
                     key={index}
                     className="relative flex flex-col items-center cursor-pointer group"
                     onClick={() => {
+                      console.log(
+                        "Step clicked:",
+                        step.name,
+                        "App ID:",
+                        app.Id
+                      );
+                      if (!app.Id) {
+                        console.error("No application ID provided.");
+                        return;
+                      }
                       if (step.name === "First Call") {
-                        setModalOpen(app.id);
+                        setModalOpen(app.Id);
                       } else if (step.name === "Interview Scheduled") {
-                        openScheduleModal(app.id);
+                        openScheduleModal(app.Id);
                       } else if (step.name === "Interviewed") {
                         openInterviewModal(app);
                       } else if (step.name === "Selected") {
-                        navigate(`/selected/${app.id}`);
+
+                        navigate(`/selected/${app.Id}`);
+
                       } else if (step.name === "Rejected") {
                         openRejectedModal(app);
                       } else {
-                        handleStatusChange(app.id, step.name);
+                        console.log("Handling status change for ID:", app.Id);
+                        handleStatusChange(app.Id, step.name);
                       }
                     }}
                   >
@@ -283,14 +364,14 @@ const JobApplication = () => {
             <p>Would you like to schedule the first call?</p>
             <div className="flex gap-4 mt-4">
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                onClick={() => handleFirstCallResponse(modalOpen, true)}
+                className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleFirstCallResponse(modalOpen, true)} // "Yes" clicked
               >
                 Yes
               </button>
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                onClick={() => handleFirstCallResponse(modalOpen, false)}
+                className="bg-gradient-to-r from-red-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => handleFirstCallResponse(modalOpen, false)} // "No" clicked
               >
                 No
               </button>
@@ -329,7 +410,7 @@ const JobApplication = () => {
 
               {/* Date Input */}
               <div>
-                <label className="block mb-2">Date</label>
+                <label className="block mb-2">Interview Date</label>
                 <input
                   type="date"
                   className="w-full border border-gray-300 rounded p-2"
@@ -340,7 +421,7 @@ const JobApplication = () => {
 
               {/* Time Input */}
               <div>
-                <label className="block mb-2">Time</label>
+                <label className="block mb-2">Interview Time</label>
                 <input
                   type="time"
                   className="w-full border border-gray-300 rounded p-2"
@@ -354,7 +435,13 @@ const JobApplication = () => {
                 className="bg-gradient-to-r from-green-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={handleScheduleInterview}
               >
-                Schedule Interview
+                Schedule
+              </button>
+              <button
+                className="ml-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                onClick={() => setScheduleModalOpen(null)}
+              >
+                Close
               </button>
             </div>
           </div>
