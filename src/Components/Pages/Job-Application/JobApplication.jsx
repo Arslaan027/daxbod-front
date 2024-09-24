@@ -6,12 +6,20 @@ import { useNavigate } from "react-router-dom";
 const initialApplications = [];
 
 const statusSteps = [
-  { name: "Applied", color: "bg-gray-500" },
-  { name: "First Call", color: "bg-gray-500" },
-  { name: "Interview Scheduled", color: "bg-gray-500" },
-  { name: "Interviewed", color: "bg-gray-500" },
-  { name: "Selected", color: "bg-gray-500" },
-  { name: "Rejected", color: "bg-gray-500 text-red-500" },
+  { name: "Applied", color: "bg-gray-500", textColor: "text-white" },
+  { name: "First Call", color: "bg-orange-100", textColor: "text-gray-800" },
+  {
+    name: "Interview Scheduled",
+    color: "bg-gray-500",
+    textColor: "text-white",
+  },
+  { name: "Interviewed", color: "bg-gray-500", textColor: "text-white" },
+  { name: "Selected", color: "bg-gray-500", textColor: "text-white" },
+  {
+    name: "Rejected",
+    color: "bg-gray-500 text-red-500",
+    textColor: "text-red-500",
+  },
 ];
 
 const managers = [
@@ -268,20 +276,20 @@ const JobApplication = () => {
           >
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                {app.fullname}
+                {app.FullName}
               </h2>
               <p className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                {app.positionAppliedFor}
+                {app.PositionAppliedFor}
               </p>
               <p className="text-gray-800 dark:text-gray-300 mb-2">
                 {app.location}
               </p>
               <p className="text-gray-700 dark:text-gray-400 mb-4">
-                Date Applied: {formatDate(app.dateApplied || "0000-00-00")}
+                Date Applied: {formatDate(app.DateApplied || "0000-00-00")}
               </p>
 
               <button
-                className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded flex items-center space-x-2"
+                className="bg-gradient-to-r from-blue-50 to-blue-100 hover:bg-gray-600 text-black px-4 py-2 rounded flex items-center space-x-2"
                 onClick={() => openDetailsModal(app)}
               >
                 Details
