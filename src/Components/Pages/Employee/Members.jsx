@@ -18,7 +18,7 @@ const fieldLabels = {
   designation: "Designation",
   dept: "Department",
   reportingManager: "Reporting Manager",
-  role: "Role",
+  // role: "Role",
   // userEmail: "Email",
   // folderName: "Folder Name",
   // password: "Password",
@@ -26,7 +26,7 @@ const fieldLabels = {
   // phone_no: "Phone Number",
   // dob: "Date of Birth",
   // country: "Country",
-  employment_type: "Employment Type",
+  // employment_type: "Employment Type",
 };
 
 const Members = ({ onDetailsClick, darkMode }) => {
@@ -376,23 +376,23 @@ const Members = ({ onDetailsClick, darkMode }) => {
       )}
 
       <table
-        className={`w-full border-collapse ${
+        className={`w-full  border-collapse ${
           darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
         }`}
       >
         <thead>
           <tr>
+            <th className="border-b p-2 text-left items-start">Actions</th>
             {Object.keys(fieldLabels).map((field) => (
               <th key={field} className="border-b p-2">
                 {fieldLabels[field] || field}
               </th>
             ))}
-            <th className="border-b p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.map((user) => (
-            <tr key={user.empId} className="border-b">
+            <tr key={user.empId} className="border-b ">
               <td className="p-2">
                 {userRole === "ADMIN" && (
                   <div className="flex gap-2">
@@ -402,12 +402,12 @@ const Members = ({ onDetailsClick, darkMode }) => {
                     >
                       <FiEdit />
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => handleRemoveEmployee(user.empId)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <AiOutlineDelete />
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => handleShowDetails(user)}
                       className="text-green-500 hover:text-green-700"

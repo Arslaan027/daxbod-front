@@ -26,6 +26,9 @@ import Userinfo from "./Components/userData/Userinfo";
 import SelectedForm from "./Components/Pages/Job-Application/SelectedForm";
 import HoldApplications from "./Components/Pages/Job-Application/HoldApplications";
 import EmpFeedbacks from "./Components/Pages/EmpFeedbacks/EmpFeedbacks";
+import "./Components/scrollbar.css";
+import Offboard from "./Components/UserOffBoarding/Offboard";
+import Offboardfrom from "./Components/UserOffBoarding/Offboardfrom";
 
 const salaryData = [
   {
@@ -216,6 +219,8 @@ function App() {
             <Route path="/selected/:id" element={<SelectedForm />} />
             <Route path="/hold-application" element={<HoldApplications />} />
             <Route path="/emp-feedbacks" element={<EmpFeedbacks />} />
+            <Route path="/off-board" element={<Offboard />} />
+            <Route path="/off-board-form" element={<Offboardfrom />} />
 
             <Route
               path="/compliance-policies"

@@ -100,6 +100,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       icon: FaClipboardList,
       text: "Application Form",
     },
+    { to: "/off-board", icon: FaBookOpen, text: "Off-Board Employee" },
     // { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
   ];
 

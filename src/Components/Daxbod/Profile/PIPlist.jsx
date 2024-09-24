@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import Title from "../Title";
 import { IoMdPersonAdd } from "react-icons/io";
+import "../../scrollbar.css";
 
 const PIPlist = ({ darkMode }) => {
   const [showForm, setShowForm] = useState(false);
@@ -172,7 +173,7 @@ const PIPlist = ({ darkMode }) => {
       )}
 
       {employees.length > 0 && (
-        <div className="mt-4 overflow-y-auto max-h-screen">
+        <div className="mt-4 overflow-y-auto max-h-screen custom-scrollbar">
           <div className="w-full min-w-max">
             {employees.map((emp, index) => (
               <div
