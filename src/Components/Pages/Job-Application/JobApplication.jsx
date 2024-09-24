@@ -186,7 +186,7 @@ const JobApplication = () => {
     if (action === "Hold") {
       try {
         const response = await fetch(
-          `http://localhost:3000/hr-management/applicants/hold/${selectedApplication.Id}`,
+          `http://localhost:3000/hr-management/applicants/hold/${selectedApplication.id}`,
           {
             method: "PUT",
             headers: {
