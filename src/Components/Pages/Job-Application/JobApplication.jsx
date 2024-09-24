@@ -268,13 +268,13 @@ const JobApplication = () => {
           >
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                {app.fullname}
+                {app.FullName}
               </h2>
               <p className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                {app.positionAppliedFor}
+                {app.PositionAppliedFor}
               </p>
               <p className="text-gray-800 dark:text-gray-300 mb-2">
-                {app.location}
+                {app.Location}
               </p>
               <p className="text-gray-700 dark:text-gray-400 mb-4">
                 Date Applied: {formatDate(app.dateApplied || "0000-00-00")}
@@ -450,14 +450,14 @@ const JobApplication = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Application Details</h2>
             <p>
-              <strong>Name:</strong> {selectedApplication.fullname}
+              <strong>Name:</strong> {selectedApplication.FullName}
             </p>
             <p>
               <strong>Position:</strong>{" "}
-              {selectedApplication.positionAppliedFor}
+              {selectedApplication.PositionAppliedFor}
             </p>
             <p>
-              <strong>Location:</strong> {selectedApplication.location}
+              <strong>Location:</strong> {selectedApplication.Location}
             </p>
             <p>
               <strong>Date Applied:</strong>{" "}
