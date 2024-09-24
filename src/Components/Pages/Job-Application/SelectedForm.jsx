@@ -1,16 +1,10 @@
-
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Ensure this import is included
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SelectedForm = () => {
-  const { id } = useParams(); // Destructure id from useParams
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const SelectedForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     empId: "",
@@ -29,19 +23,12 @@ const SelectedForm = () => {
     imageFile: null,
   });
 
-
-  const [jobApplicationId, setJobApplicationId] = useState(id); // Set the job application ID from URL
-  const navigate = useNavigate();
-
   useEffect(() => {
-    console.log("id:", id);
-    if (id && id !== "" && id !== null && id !== undefined) {
-      setJobApplicationId(id);
-      console.log("Job Application ID:", jobApplicationId);
-      // Fetch job application details or perform any necessary actions
+    if (id) {
+      console.log("Job Application ID:", id);
+      // Fetch job application details or perform any necessary actions here
     }
   }, [id]);
-
 
   const backButton = () => {
     navigate(-1);
@@ -58,8 +45,6 @@ const SelectedForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-
     const userRole = localStorage.getItem("role");
     const token = localStorage.getItem("token");
 
@@ -79,15 +64,13 @@ const SelectedForm = () => {
     }
 
     try {
-      // Step 1: Submit employee data
-
       const response = await axios.post(
         "http://localhost:3000/hr-management/emp/add-employee",
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-
+            Authorization: `Bearer ${token}`, // Correctly placed Authorization header
           },
         }
       );
@@ -95,27 +78,8 @@ const SelectedForm = () => {
       console.log(response.data.message);
       alert("Employee added successfully!");
 
-      //   setJobApplicationId(id);
-
-      await handleDeleteJobApplication(jobApplicationId); // Pass correct jobApplicationId
-
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log(response.data.message); // Log the response to inspect its structure
-      alert("Employee added successfully!");
-
-      const id = response.data.id; // Ensure the back-end returns the job application ID
-
-      // Step 2: Delete job application if ID is returned
-      if (id) {
-        await handleDeleteJobApplication(id);
-      } else {
-        console.error("Job application ID not found in response.");
-      }
-
+      // Handle job application deletion if needed
+      await handleDeleteJobApplication(id); // Use id directly
 
       // Reset form data
       setFormData({
@@ -135,15 +99,12 @@ const SelectedForm = () => {
         imageFile: null,
       });
 
-
       navigate("/employee");
     } catch (error) {
       console.error("Error adding employee:", error);
-
       alert("Error adding employee. Please try again.");
     }
   };
-
 
   const handleDeleteJobApplication = async (jobApplicationId) => {
     if (!jobApplicationId) {
@@ -157,23 +118,17 @@ const SelectedForm = () => {
         `http://localhost:3000/hr-management/applicants/delete/${jobApplicationId}`,
         {
           method: "DELETE",
-
         }
       );
 
       if (!response.ok) {
-
         const data = await response.json();
         throw new Error(data.message || "Failed to delete job application.");
-
       }
 
       const data = await response.json();
       console.log(data.message);
       alert("Job application deleted successfully!");
-
-      setJobApplicationId(null);
-
     } catch (error) {
       console.error("Error deleting job application:", error);
       alert("Error deleting job application. Please try again.");
@@ -190,153 +145,59 @@ const SelectedForm = () => {
         <div className="flex space-x-8">
           {/* Left Section */}
           <div className="w-1/2 space-y-4">
-            <div>
-              <label>Employee ID</label>
-              <input
-                type="text"
-                name="empId"
-                value={formData.empId}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Date of Joining</label>
-              <input
-                type="date"
-                name="doj"
-                value={formData.doj}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Designation</label>
-              <input
-                type="text"
-                name="designation"
-                value={formData.designation}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Department</label>
-              <input
-                type="text"
-                name="dept"
-                value={formData.dept}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Reporting Manager</label>
-              <input
-                type="text"
-                name="reportingManager"
-                value={formData.reportingManager}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
+            {/* Employee ID, Name, Date of Joining, Designation, Department, Reporting Manager */}
+            {[
+              "empId",
+              "name",
+              "doj",
+              "designation",
+              "dept",
+              "reportingManager",
+            ].map((field) => (
+              <div key={field}>
+                <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                <input
+                  type={field === "doj" || field === "dob" ? "date" : "text"}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="border p-2 w-full"
+                  required
+                />
+              </div>
+            ))}
           </div>
 
           {/* Right Section */}
           <div className="w-1/2 space-y-4">
-            <div>
-              <label>Role</label>
-              <input
-                type="text"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Email</label>
-              <input
-                type="email"
-                name="userEmail"
-                value={formData.userEmail}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Phone Number</label>
-              <input
-                type="tel"
-                name="phone_no"
-                value={formData.phone_no}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Date of Birth</label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Country</label>
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
-            <div>
-              <label>Employment Type</label>
-              <input
-                type="text"
-                name="employment_type"
-                value={formData.employment_type}
-                onChange={handleChange}
-                className="border p-2 w-full"
-                required
-              />
-            </div>
+            {/* Role, Email, Password, Phone Number, Date of Birth, Country, Employment Type */}
+            {[
+              "role",
+              "userEmail",
+              "password",
+              "phone_no",
+              "dob",
+              "country",
+              "employment_type",
+            ].map((field) => (
+              <div key={field}>
+                <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                <input
+                  type={
+                    field === "userEmail"
+                      ? "email"
+                      : field === "phone_no"
+                      ? "tel"
+                      : "text"
+                  }
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="border p-2 w-full"
+                  required
+                />
+              </div>
+            ))}
             <div>
               <label>Profile Picture</label>
               <input

@@ -13,34 +13,22 @@ const HoldApplications = () => {
   const [actionType, setActionType] = useState(null);
 
   useEffect(() => {
-    const dummyData = [
-      {
-        id: 1,
-        fullname: "Alice Johnson",
-        positionAppliedFor: "Software Engineer",
-        location: "New York",
-        dateApplied: "2024-09-10",
-        status: "Review",
-      },
-      {
-        id: 2,
-        fullname: "Bob Smith",
-        positionAppliedFor: "Product Manager",
-        location: "San Francisco",
-        dateApplied: "2024-09-12",
-        status: "Remove",
-      },
-      {
-        id: 3,
-        fullname: "Charlie Brown",
-        positionAppliedFor: "UI/UX Designer",
-        location: "Chicago",
-        dateApplied: "2024-09-15",
-        status: "Review",
-      },
-    ];
+    const fetchHoldApplications = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/hr-management/applicants/hold-app"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch hold applications");
+        }
+        const data = await response.json();
+        setHoldApplications(data);
+      } catch (error) {
+        console.error("Error fetching hold applications:", error.message);
+      }
+    };
 
-    setHoldApplications(dummyData);
+    fetchHoldApplications();
   }, []);
 
   const handleStepClick = (appId, stepIndex) => {
@@ -57,27 +45,47 @@ const HoldApplications = () => {
     }
   };
 
-  const handleConfirmAction = () => {
-    const appToUpdate = holdApplications.find((app) => app.id === currentAppId);
-
+  const handleConfirmAction = async () => {
     if (actionType === "remove") {
-      setHoldApplications((prevApps) =>
-        prevApps.filter((app) => app.id !== currentAppId)
+      try {
+        // Call the API to delete the applicant
+        const response = await fetch(
+          `http://localhost:3000/hr-management/applicants/delete-hold/${currentAppId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete the hold application");
+        }
+
+        // Remove the applicant from state
+        setHoldApplications((prevApps) =>
+          prevApps.filter((app) => app.id !== currentAppId)
+        );
+      } catch (error) {
+        console.error("Error deleting hold application:", error.message);
+      }
+    } else if (actionType === "revive") {
+      const appToUpdate = holdApplications.find(
+        (app) => app.id === currentAppId
       );
-    } else if (
-      actionType === "revive" &&
-      appToUpdate.status !== "Job Application"
-    ) {
-      setHoldApplications((prevApps) =>
-        prevApps.map((app) =>
-          app.id === currentAppId ? { ...app, status: "Job Application" } : app
-        )
-      );
+      if (appToUpdate.status !== "Job Application") {
+        setHoldApplications((prevApps) =>
+          prevApps.map((app) =>
+            app.id === currentAppId
+              ? { ...app, status: "Job Application" }
+              : app
+          )
+        );
+      }
     }
 
-    setModalOpen(false); // Close the modal
-    setCurrentAppId(null); // Clear the current app ID
-    setActionType(null); // Clear the action type
+    // Close the modal and reset states
+    setModalOpen(false);
+    setCurrentAppId(null);
+    setActionType(null);
   };
 
   return (
