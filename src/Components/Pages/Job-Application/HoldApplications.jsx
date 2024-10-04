@@ -68,17 +68,45 @@ const HoldApplications = () => {
         console.error("Error deleting hold application:", error.message);
       }
     } else if (actionType === "revive") {
-      const appToUpdate = holdApplications.find(
-        (app) => app.id === currentAppId
-      );
-      if (appToUpdate.status !== "Job Application") {
-        setHoldApplications((prevApps) =>
-          prevApps.map((app) =>
-            app.id === currentAppId
-              ? { ...app, status: "Job Application" }
-              : app
-          )
+      try {
+        // Find the application to revive
+        const appToRevive = holdApplications.find(
+          (app) => app.id === currentAppId
         );
+
+        if (!appToRevive) {
+          throw new Error("Application not found");
+        }
+
+        const response = await fetch(
+          "http://localhost:3000/hr-management/applicants/form-submit",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fullname: appToRevive.fullname,
+              email: appToRevive.email,
+              phoneNumber: appToRevive.phoneNumber,
+              qualification: appToRevive.qualification,
+              positionAppliedFor: appToRevive.positionAppliedFor,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to revive the hold application");
+        }
+
+        // Optionally: Remove the applicant from the hold applications list
+        setHoldApplications((prevApps) =>
+          prevApps.filter((app) => app.id !== currentAppId)
+        );
+
+        console.log("Application revived successfully");
+      } catch (error) {
+        console.error("Error reviving hold application:", error.message);
       }
     }
 
