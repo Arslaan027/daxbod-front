@@ -50,7 +50,19 @@ const JobApplication = () => {
         }
         const data = await response.json();
         console.log("Fetched applications:", data);
-        setApplications(data);
+
+        // Retrieve stored statuses and update application state
+        const updatedData = data.map((app) => {
+          const storedStatus = localStorage.getItem(
+            `applicationStatus-${app.id}`
+          );
+          return {
+            ...app,
+            status: storedStatus ? storedStatus : app.status,
+          };
+        });
+
+        setApplications(updatedData);
       } catch (error) {
         console.error("Failed to fetch applications:", error);
       }
@@ -58,6 +70,7 @@ const JobApplication = () => {
 
     fetchApplications();
   }, []);
+
   const formatDate = (dateString) => {
     if (!dateString || dateString === "0000-00-00") return "N/A";
     const date = new Date(dateString);
@@ -118,6 +131,8 @@ const JobApplication = () => {
   const handleStatusChange = async (Id, newStatus) => {
     try {
       await updateApplicationStatus(Id, newStatus);
+
+      localStorage.setItem(`applicationStatus-${Id}`, newStatus);
 
       setApplications((prevApps) =>
         prevApps.map((app) =>
@@ -450,26 +465,38 @@ const JobApplication = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Application Details</h2>
             <p>
-              <strong>Name:</strong> {selectedApplication.fullname}
+              <strong>Name:</strong> {selectedApplication.FullName}
             </p>
             <p>
               <strong>Position:</strong>{" "}
-              {selectedApplication.positionAppliedFor}
+              {selectedApplication.PositionAppliedFor}
             </p>
             <p>
-              <strong>Location:</strong> {selectedApplication.location}
+              <strong>Location:</strong> {selectedApplication.Location}
             </p>
             <p>
               <strong>Date Applied:</strong>{" "}
-              {formatDate(selectedApplication.dateApplied)}
+              {formatDate(selectedApplication.DateApplied)}
             </p>
             {/* Add more details as needed */}
-            <button
-              className="mt-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-              onClick={() => setDetailsModalOpen(false)}
-            >
-              Close
-            </button>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 mt-4">
+              <a
+                href={selectedApplication.ResumeUrl}
+                download
+                className="inline-block px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-center cursor-pointer"
+              >
+                Download Resume
+              </a>
+
+              <button
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                onClick={() => setDetailsModalOpen(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
