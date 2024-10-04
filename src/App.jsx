@@ -17,7 +17,7 @@ import LMS from "./Components/Pages/LMS/LMS";
 import JobApplication from "./Components/Pages/Job-Application/JobApplication";
 import Form from "../src/Components/Pages/ApplicationForm/Applicationform";
 import Team from "./Components/Daxbod/Team";
-import UserDaxbod from "./Components/UserDaxbod/UserDaxbod";
+// import UserDaxbod from "./Components/UserDaxbod/UserDaxbod";
 import Financial from "./Components/UserFinancialReport/Financial";
 import FeedbackSupport from "./Components/UserExtraPages/FeedbackSupport";
 import CompliancePolicies from "./Components/UserExtraPages/CompliancePolicies";
@@ -201,7 +201,7 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="/employee" element={<Employee />} />
-            <Route path="/user" element={<UserDaxbod />} />
+            {/* <Route path="/user" element={<UserDaxbod />} /> */}
             <Route path="/payroll" element={<Payroll />} />
             <Route path="/lms" element={<LMS />} />
             <Route
@@ -215,7 +215,7 @@ function App() {
             <Route path="/job-application" element={<JobApplication />} />
             <Route path="/application-form" element={<Form />} />
             <Route path="/feedback" element={<FeedbackSupport />} />
-            <Route path="/my-info" element={<Userinfo />} />
+            <Route path="/user" element={<Userinfo />} />
             <Route path="/selected/:id" element={<SelectedForm />} />
             <Route path="/hold-application" element={<HoldApplications />} />
             <Route path="/emp-feedbacks" element={<EmpFeedbacks />} />

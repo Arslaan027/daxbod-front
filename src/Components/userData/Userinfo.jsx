@@ -88,7 +88,7 @@ const Userinfo = () => {
 
   // Render employee data once fetched
   return (
-    <div className="min-h-screen bg-gray-100 py-12 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-100 py-12 flex items-center justify-center md:ml-64">
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-8">
         <h1 className="text-3xl font-bold text-center mb-8">Your Details</h1>
 

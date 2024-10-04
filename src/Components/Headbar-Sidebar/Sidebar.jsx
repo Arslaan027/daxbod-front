@@ -22,7 +22,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   // Define links based on roles
   const hrLinks = [
     { to: "/", icon: FaTachometerAlt, text: "Dashboard" },
-    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+    { to: "/user", icon: BiDetail, text: "User" },
 
     {
       to: "/employee",
@@ -39,25 +39,29 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     // { to: "/inventory", icon: FaBoxes, text: "Inventory" },
     { to: "/job-application", icon: FaBriefcase, text: "Job Applications" },
     { to: "/hold-application", icon: FaBookOpen, text: "Hold Aplications" },
+    { to: "/off-board", icon: FaBookOpen, text: "Off-Board Employee" },
+
     // { to: "/emp-feedbacks", icon: FaComments, text: "Employee Feedbacks" },
   ];
 
   const userLinks = [
-    { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
+    // { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
     // { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
-    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+    { to: "/user", icon: BiDetail, text: "User" },
     { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
+    { to: "/lms", icon: FaBookOpen, text: "LMS" },
+
     // { to: "/feedback", icon: FaComments, text: "Feedback" },
-    // {
-    //   to: "/compliance-policies",
-    //   icon: FaFileContract,
-    //   text: "Compliance Policies",
-    // },
+    {
+      to: "/compliance-policies",
+      icon: FaFileContract,
+      text: "Compliance Policies",
+    },
   ];
   const managerLinks = [
-    { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
+    // { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
     // { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
-    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+    { to: "/user", icon: BiDetail, text: "User" },
     { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
     // { to: "/feedback", icon: FaComments, text: "Feedback" },
     // {
@@ -82,7 +86,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     { to: "/lms", icon: FaBookOpen, text: "LMS" },
     // { to: "/inventory", icon: FaBoxes, text: "Inventory" },
     // { to: "/company-announcements", icon: FaBullhorn, text: "Announcements" },
-    { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
+    // { to: "/user", icon: FaTachometerAlt, text: "Dashboard" },
     { to: "/financial-report", icon: FaChartLine, text: "Financial Report" },
     // { to: "/feedback", icon: FaComments, text: "Feedback" },
     // {
@@ -90,7 +94,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     //   icon: FaFileContract,
     //   text: "Compliance Policies",
     // },
-    { to: "/my-info", icon: BiDetail, text: "Employee Details" },
+    { to: "/user", icon: BiDetail, text: "User" },
 
     { to: "/job-application", icon: FaBriefcase, text: "Job Applications" },
     { to: "/hold-application", icon: FaBookOpen, text: "Hold Aplications" },

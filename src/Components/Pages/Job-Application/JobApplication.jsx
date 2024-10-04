@@ -6,20 +6,12 @@ import { useNavigate } from "react-router-dom";
 const initialApplications = [];
 
 const statusSteps = [
-  { name: "Applied", color: "bg-gray-500", textColor: "text-white" },
-  { name: "First Call", color: "bg-orange-100", textColor: "text-gray-800" },
-  {
-    name: "Interview Scheduled",
-    color: "bg-gray-500",
-    textColor: "text-white",
-  },
-  { name: "Interviewed", color: "bg-gray-500", textColor: "text-white" },
-  { name: "Selected", color: "bg-gray-500", textColor: "text-white" },
-  {
-    name: "Rejected",
-    color: "bg-gray-500 text-red-500",
-    textColor: "text-red-500",
-  },
+  { name: "Applied", color: "bg-gray-500" },
+  { name: "First Call", color: "bg-gray-500" },
+  { name: "Interview Scheduled", color: "bg-gray-500" },
+  { name: "Interviewed", color: "bg-gray-500" },
+  { name: "Selected", color: "bg-gray-500" },
+  { name: "Rejected", color: "bg-gray-500 text-red-500" },
 ];
 
 const managers = [
@@ -282,14 +274,14 @@ const JobApplication = () => {
                 {app.PositionAppliedFor}
               </p>
               <p className="text-gray-800 dark:text-gray-300 mb-2">
-                {app.Location}
+                {app.location}
               </p>
               <p className="text-gray-700 dark:text-gray-400 mb-4">
                 Date Applied: {formatDate(app.DateApplied || "0000-00-00")}
               </p>
 
               <button
-                className="bg-gradient-to-r from-blue-50 to-blue-100 hover:bg-gray-600 text-black px-4 py-2 rounded flex items-center space-x-2"
+                className="bg-gradient-to-r from-gray-50 to-gray-100 hover:bg-gray-600 text-black px-4 py-2 rounded flex items-center space-x-2"
                 onClick={() => openDetailsModal(app)}
               >
                 Details
@@ -458,14 +450,14 @@ const JobApplication = () => {
           >
             <h2 className="text-xl font-semibold mb-4">Application Details</h2>
             <p>
-              <strong>Name:</strong> {selectedApplication.FullName}
+              <strong>Name:</strong> {selectedApplication.fullname}
             </p>
             <p>
               <strong>Position:</strong>{" "}
-              {selectedApplication.PositionAppliedFor}
+              {selectedApplication.positionAppliedFor}
             </p>
             <p>
-              <strong>Location:</strong> {selectedApplication.Location}
+              <strong>Location:</strong> {selectedApplication.location}
             </p>
             <p>
               <strong>Date Applied:</strong>{" "}
@@ -496,16 +488,27 @@ const JobApplication = () => {
             <h2 className="text-xl font-semibold mb-4">Interview Feedback</h2>
 
             <div>
-              <label className="block mb-2">Interview Feedback:</label>
-              <textarea
+              {/* <label className="block mb-2">Interview Feedback:</label> */}
+              {/* <textarea
                 className="w-full px-3 py-2 border border-gray-300 rounded"
                 rows="4"
                 value={interviewFeedback}
                 onChange={(e) => setInterviewFeedback(e.target.value)}
-              />
+              /> */}
+
+              <b>Rejected:</b>
+              <i>
+                <ul className="list-disc list-inside ml-5 mt-2">
+                  <li>Candidate has communication problems.</li>
+                  <li>Not confident enough.</li>
+                  <li>Does not have a bachelor's degree.</li>
+                </ul>
+              </i>
             </div>
             <div className="mt-4">
-              <label className="block mb-2">Final Status:</label>
+              {/* <label className="block mb-2">Final Status:</label> */}
+              <b>Final Status:</b>
+
               <select
                 className="w-full px-3 py-2 border border-gray-300 rounded"
                 value={finalStatus}

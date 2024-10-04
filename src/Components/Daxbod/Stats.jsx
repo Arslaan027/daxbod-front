@@ -33,7 +33,7 @@ const Stats = () => {
             className="bg-white p-6 rounded-2xl flex items-center gap-4 dark:bg-gray-900 dark:text-gray-400 relative"
           >
             <span
-              className={`${data.bgColor} px-3 py-6 text-2xl rounded-2xl dark:bg-gray-500`}
+              className={`${data.bgColor} px-3  py-6 text-2xl rounded-2xl dark:bg-gray-500`}
             >
               <data.icon />
             </span>

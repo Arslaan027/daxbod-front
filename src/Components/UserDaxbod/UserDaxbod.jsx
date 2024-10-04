@@ -92,7 +92,7 @@ const UserDaxbod = () => {
               <div className="border border-gray-300 rounded-lg p-3 md:p-4 w-full flex flex-col items-center">
                 <h3 className="text-md md:text-lg font-semibold mb-2">Time</h3>
                 {/* Time */}
-                <p className="text-xl md:text-3xl font-semibold mb-1">
+                <p className="text-xl md:text-2xl font-semibold mb-1">
                   {currentTime}
                 </p>
                 {/* Date */}
