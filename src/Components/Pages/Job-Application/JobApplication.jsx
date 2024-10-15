@@ -452,55 +452,6 @@ const JobApplication = () => {
           </div>
         </div>
       )}
-
-      {/* Details Modal */}
-      {detailsModalOpen && selectedApplication && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50"
-          onClick={() => setDetailsModalOpen(false)}
-        >
-          <div
-            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-semibold mb-4">Application Details</h2>
-            <p>
-              <strong>Name:</strong> {selectedApplication.FullName}
-            </p>
-            <p>
-              <strong>Position:</strong>{" "}
-              {selectedApplication.PositionAppliedFor}
-            </p>
-            <p>
-              <strong>Location:</strong> {selectedApplication.Location}
-            </p>
-            <p>
-              <strong>Date Applied:</strong>{" "}
-              {formatDate(selectedApplication.DateApplied)}
-            </p>
-            {/* Add more details as needed */}
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 mt-4">
-              <a
-                href={selectedApplication.ResumeUrl}
-                download
-                className="inline-block px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-center cursor-pointer"
-              >
-                Download Resume
-              </a>
-
-              <button
-                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-                onClick={() => setDetailsModalOpen(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Interview Feedback Modal */}
 
       {interviewModalOpen && (
@@ -580,6 +531,54 @@ const JobApplication = () => {
                 onClick={() => handleRejectedAction("Remove")}
               >
                 Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {detailsModalOpen && selectedApplication && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          onClick={() => setDetailsModalOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Application Details</h2>
+            <p>
+              <strong>Name:</strong> {selectedApplication.FullName}
+            </p>
+            <p>
+              <strong>Position:</strong>{" "}
+              {selectedApplication.PositionAppliedFor}
+            </p>
+            <p>
+              <strong>Location:</strong> {selectedApplication.Location}
+            </p>
+            <p>
+              <strong>Date Applied:</strong>{" "}
+              {formatDate(selectedApplication.DateApplied)}
+            </p>
+            {/* Add more details as needed */}
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-4 mt-4">
+              <a
+                href={selectedApplication.ResumeUrl}
+                download
+                className="inline-block px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 text-center"
+              >
+                Download Resume
+              </a>
+
+              <button
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                onClick={() => setDetailsModalOpen(false)}
+              >
+                Close
               </button>
             </div>
           </div>

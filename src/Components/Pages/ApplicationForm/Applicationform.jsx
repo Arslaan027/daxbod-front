@@ -17,7 +17,6 @@ const Form = () => {
     experienceDuration: "",
     currentCTC: "",
     expectedCTC: "",
-    dateApplied: "",
   });
 
   const handleChange = (e) => {
@@ -28,14 +27,7 @@ const Form = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      resume: e.target.files[0],
-    }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const form = new FormData();
@@ -45,17 +37,22 @@ const Form = () => {
       }
     }
 
-    fetch("http://localhost:3000/hr-management/applicants/form-submit", {
-      method: "POST",
-      body: form,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Form submitted successfully:", data);
-      })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-      });
+    try {
+      const response = await fetch(
+        "http://localhost:3000/hr-management/applicants/form-submit",
+        {
+          method: "POST",
+          body: form,
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log("Form submitted successfully:", data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   const positions = [
@@ -64,11 +61,11 @@ const Form = () => {
     "Back-end Developer",
     "Human Resource",
   ];
+
   const years = Array.from(
     { length: 50 },
     (_, i) => new Date().getFullYear() - i
   );
-  console.log(years);
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center mt-10 dark:bg-gray-800 dark:border-gray-800">
@@ -130,15 +127,21 @@ const Form = () => {
               >
                 Year of Passing
               </label>
-              <input
-                type="text"
+              <select
                 id="yearOfPassing"
                 name="yearOfPassing"
                 value={formData.yearOfPassing}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
-              />
+              >
+                <option value="">Select Year</option>
+                {years.map((year, index) => (
+                  <option key={index} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Position Applied For */}
@@ -216,7 +219,7 @@ const Form = () => {
                 type="file"
                 id="resume"
                 name="resume"
-                onChange={handleFileChange}
+                onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none dark:bg-gray-600 dark:text-white"
                 required
               />
@@ -263,19 +266,19 @@ const Form = () => {
               />
             </div>
 
-            {/* Date of Birth */}
+            {/* Current CTC */}
             <div className="mb-5">
               <label
-                htmlFor="dateOfBirth"
+                htmlFor="currentCTC"
                 className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
               >
-                Date of Birth
+                Current CTC
               </label>
               <input
-                type="date"
-                id="dateOfBirth"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
+                type="text"
+                id="currentCTC"
+                name="currentCTC"
+                value={formData.currentCTC}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
@@ -317,58 +320,38 @@ const Form = () => {
                 className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
                 required
               >
-                <option value="">Select Experience</option>
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
               </select>
             </div>
 
+            {/* Experience Duration */}
             {formData.priorExperience === "Yes" && (
               <div className="mb-5">
-                {/* Experience Duration */}
-                <div className="mb-5">
-                  <label
-                    htmlFor="experienceDuration"
-                    className="block text-gray-700 text-sm font-medium mb-1 dark:text-white"
-                  >
-                    Experience Duration (in years)
-                  </label>
-                  <input
-                    type="number"
-                    id="experienceDuration"
-                    name="experienceDuration"
-                    value={formData.experienceDuration}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-
-                {/* Current CTC */}
-                <div className="mb-5">
-                  <label
-                    htmlFor="currentCTC"
-                    className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
-                  >
-                    Current CTC
-                  </label>
-                  <input
-                    type="text"
-                    id="currentCTC"
-                    name="currentCTC"
-                    value={formData.currentCTC}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
-                    required
-                  />
-                </div>
+                <label
+                  htmlFor="experienceDuration"
+                  className="block text-gray-700 dark:text-white text-sm font-medium mb-1"
+                >
+                  Experience Duration (in years)
+                </label>
+                <input
+                  type="text"
+                  id="experienceDuration"
+                  name="experienceDuration"
+                  value={formData.experienceDuration}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-white"
+                  required
+                />
               </div>
             )}
           </div>
-          <div className="flex justify-center">
+
+          {/* Submit Button */}
+          <div className="w-full mb-5 text-center">
             <button
               type="submit"
-              className="bg-gradient-to-r from-gray-400 to-gray-600 hover:bg-gray-600 text-white px-4 py-2 rounded space-x-2"
+              className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg focus:outline-none"
             >
               Submit
             </button>
